@@ -2,7 +2,6 @@ package com.ruber.model;
 
 public class Market {
     private Boolean enabled;
-    private Integer mainAlbumId;
     private Integer contactId;
     private Currency currency;
 
@@ -14,13 +13,6 @@ public class Market {
         this.enabled = enabled;
     }
 
-    public Integer getMainAlbumId() {
-        return mainAlbumId;
-    }
-
-    public void setMainAlbumId(Integer mainAlbumId) {
-        this.mainAlbumId = mainAlbumId;
-    }
 
     public Integer getContactId() {
         return contactId;
@@ -38,10 +30,8 @@ public class Market {
         this.currency = currency;
     }
 
-    public Market(Boolean enabled, Integer mainAlbumId, Integer contactId, Currency currency) {
-
+    public Market(Boolean enabled, Integer contactId, Currency currency) {
         this.enabled = enabled;
-        this.mainAlbumId = mainAlbumId;
         this.contactId = contactId;
         this.currency = currency;
     }

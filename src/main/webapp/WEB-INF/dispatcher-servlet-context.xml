@@ -15,4 +15,5 @@
           p:suffix=".jsp"
           p:viewClass="org.springframework.web.servlet.view.JstlView"
             />
+
 </beans>

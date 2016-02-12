@@ -2,7 +2,7 @@ package com.ruber.model;
 
 public class Group {
     private Integer id;
-    private Integer vk_id;
+    private Integer vkId;
     private String name;
     private Market market;
 
@@ -14,12 +14,12 @@ public class Group {
         this.id = id;
     }
 
-    public Integer getVk_id() {
-        return vk_id;
+    public Integer getVkId() {
+        return vkId;
     }
 
-    public void setVk_id(Integer vk_id) {
-        this.vk_id = vk_id;
+    public void setVkId(Integer vkId) {
+        this.vkId = vkId;
     }
 
     public String getName() {
@@ -38,10 +38,10 @@ public class Group {
         this.market = market;
     }
 
-    public Group(Integer id, Integer vk_id, String name, Market market) {
+    public Group(Integer id, Integer vkId, String name, Market market) {
 
         this.id = id;
-        this.vk_id = vk_id;
+        this.vkId = vkId;
         this.name = name;
         this.market = market;
     }
