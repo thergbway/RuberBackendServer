@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 public class CustomControllerAdvice {
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-        binder.registerCustomEditor(GroupsController.FieldValue.class,
-            new CaseInsensitiveEnumEditor<>(GroupsController.FieldValue.class));
+//        binder.registerCustomEditor(GroupsController.FieldValue.class,
+//            new CaseInsensitiveEnumEditor<>(GroupsController.FieldValue.class));
     }
 }

@@ -1,4 +1,4 @@
-package com.ruber.model;
+package com.ruber.controller.dto;
 
 public class Currency {
     private Integer id;

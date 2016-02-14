@@ -1,8 +1,7 @@
 package com.ruber.controller;
 
-import com.mashape.unirest.http.exceptions.UnirestException;
-import com.ruber.model.AuthRequest;
-import com.ruber.model.AuthResponse;
+import com.ruber.controller.dto.AuthRequest;
+import com.ruber.controller.dto.AuthResponse;
 import com.ruber.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,12 +17,6 @@ public class AuthController {
 
     @RequestMapping(method = RequestMethod.POST)
     public AuthResponse authenticate(@RequestBody AuthRequest authRequest) {
-        try {
-            return authService.authenticate(authRequest);
-        } catch (UnirestException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-
+        return authService.authenticate(authRequest);
     }
 }

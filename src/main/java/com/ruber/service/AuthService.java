@@ -1,27 +1,28 @@
 package com.ruber.service;
 
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
-import com.ruber.model.AuthRequest;
-import com.ruber.model.AuthResponse;
+import com.ruber.controller.dto.AuthRequest;
+import com.ruber.controller.dto.AuthResponse;
+import com.ruber.service.vk.VkService;
+import com.ruber.service.vk.dto.GetAccessTokenRequest;
+import com.ruber.service.vk.dto.GetAccessTokenResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 @Service
 public class AuthService {
     private static final Map<Integer, String> vkIdToVkAccessTokenMap = new HashMap<>();
     private static final Map<String, Integer> ruberAccessTokenToVkIdMap = new HashMap<>();
-    private static final Random rand = new Random();
 
     static {
-        vkIdToVkAccessTokenMap.put(146812710, "2fc42a7c6836f1a68eb54a64dc9ff42b108d405f04d1d4777842acf1a0447d421154cdcf7441f12d2deee");
-        ruberAccessTokenToVkIdMap.put("1455264594172_146812710", 146812710);
+        vkIdToVkAccessTokenMap.put(146812710, "294083358f00ace6940b42453c4ce2473b23f4e182e6627647b72e0122a0685bb95f4c5465666f3130e14");
+        ruberAccessTokenToVkIdMap.put("1455430739207_146812710", 146812710);
     }
+
+    @Autowired
+    private VkService vkService;
 
     public Boolean checkAccessToken(String ruberAccessToken) {
         return ruberAccessTokenToVkIdMap.containsKey(ruberAccessToken);
@@ -33,18 +34,14 @@ public class AuthService {
         return vkIdToVkAccessTokenMap.get(vkId);
     }
 
-    public AuthResponse authenticate(AuthRequest authRequest) throws UnirestException {
-        HttpResponse<JsonNode> response = Unirest.get("https://oauth.vk.com/access_token")
-            .queryString("client_id", 5242612)
-            .queryString("client_secret", "REmRGbnkrKAqgEz2iac9")
-            .queryString("redirect_uri", authRequest.getRedirectURI())
-            .queryString("code", authRequest.getCode())
-            .asJson();
+    public AuthResponse authenticate(AuthRequest req) {
+        GetAccessTokenRequest getAccessTokenRequest =
+            new GetAccessTokenRequest(5242612, "REmRGbnkrKAqgEz2iac9", req.getRedirectURI(), req.getCode());
+        GetAccessTokenResponse resp = vkService.getAccessToken(getAccessTokenRequest);
 
-        String vkAccessToken = response.getBody().getObject().getString("access_token");
-        Integer userId = response.getBody().getObject().getInt("user_id");
+        Integer userId = resp.getUserId();
 
-        vkIdToVkAccessTokenMap.put(userId, vkAccessToken);
+        vkIdToVkAccessTokenMap.put(userId, resp.getAccessToken());
         String ruberAccessToken = System.currentTimeMillis() + "_" + userId;
         ruberAccessTokenToVkIdMap.put(ruberAccessToken, userId);
 
