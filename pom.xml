@@ -125,7 +125,7 @@
                 <executions>
                     <execution>
                         <id>auto-clean</id>
-                        <phase>compile</phase>
+                        <phase>initialize</phase>
                         <goals>
                             <goal>clean</goal>
                         </goals>
@@ -134,10 +134,10 @@
             </plugin>
 
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.6</version>
             </plugin>
-
         </plugins>
 
         <finalName>ruber</finalName>
