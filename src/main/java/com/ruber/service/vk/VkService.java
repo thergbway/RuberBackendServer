@@ -1,8 +1,10 @@
 package com.ruber.service.vk;
 
+import com.ruber.controller.dto.Item;
 import com.ruber.controller.dto.ItemsResponse;
 import com.ruber.service.vk.command.GetAccessTokenCommand;
 import com.ruber.service.vk.command.GetGroupsCommand;
+import com.ruber.service.vk.command.GetMarketItemCommand;
 import com.ruber.service.vk.command.GetMarketItemsCommand;
 import com.ruber.service.vk.dto.GetAccessTokenRequest;
 import com.ruber.service.vk.dto.GetAccessTokenResponse;
@@ -21,5 +23,9 @@ public class VkService {
 
     public ItemsResponse getMarketItems(Integer ownerId, Integer count, Integer offset, String vkAccessToken) {
         return new GetMarketItemsCommand(ownerId, count, offset, vkAccessToken).execute();
+    }
+
+    public Item getMarketItem(Integer ownerId, Integer id, String vkAccessToken) {
+        return new GetMarketItemCommand(ownerId, id, vkAccessToken).execute();
     }
 }
