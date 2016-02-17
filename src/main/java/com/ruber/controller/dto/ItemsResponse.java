@@ -1,6 +1,5 @@
-package com.ruber.service.vk.dto;
+package com.ruber.controller.dto;
 
-import com.ruber.controller.dto.Group;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetGroupsResponse {
-    private Group[] groups;
+public class ItemsResponse {
     private Integer count;
+    private Item[] items;
 }

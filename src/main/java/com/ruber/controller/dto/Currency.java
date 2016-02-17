@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Market {
-    private Boolean enabled;
-    private Integer items_count;
+public class Currency {
+    private Integer id;
+    private String name;
 }

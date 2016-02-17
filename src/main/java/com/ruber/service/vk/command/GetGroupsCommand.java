@@ -29,20 +29,20 @@ public class GetGroupsCommand implements VkCommand<GetGroupsResponse> {
                     GetGroupsResponse getGroupsResponse = new GetGroupsResponse();
 
                     JsonNode responseNode = new ObjectMapper().readTree(response.getBody()).get("response");
-                    int totalCount = responseNode.get("count").asInt();
-                    getGroupsResponse.setTotalCount(totalCount);
+                    int count = responseNode.get("count").asInt();
+                    getGroupsResponse.setCount(count);
 
                     JsonNode groupsNode = responseNode.get("groups");
                     List<Group> groups = new LinkedList<>();
                     for (JsonNode next : groupsNode) {
                         Group group = new Group();
-                        group.setVkId(next.get("group").get("id").asInt());
+                        group.setId(next.get("group").get("id").asInt());
                         group.setName(next.get("group").get("name").asText());
 
                         Market market = new Market();
                         if (next.get("group").get("market").get("enabled").asInt() == 1) {
                             market.setEnabled(true);
-                            market.setItemsCount(next.get("market_items").asInt());
+                            market.setItems_count(next.get("market_items").asInt());
                         } else {
                             market.setEnabled(false);
                         }

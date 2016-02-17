@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GetAccessTokenRequest {
-    private Integer clientId;
-    private String clientSecret;
-    private String redirectURI;
+    private Integer client_id;
+    private String client_secret;
+    private String redirect_uri;
     private String code;
 }

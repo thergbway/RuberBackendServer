@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AuthRequest {
     private String code;
-    private String redirectURI;
-    private Integer ruberAppId;
-    private String ruberAppSecret;
+    private String redirect_uri;
+    private Integer ruber_app_id;
+    private String ruber_app_secret;
 }

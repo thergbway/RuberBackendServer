@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Group {
-    private Integer vkId;
+    private Integer id;
     private String name;
     private Market market;
 }

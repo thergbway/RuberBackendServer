@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AuthResponse {
-    private String ruberAccessToken;
-    private Integer vkId;
+    private String ruber_access_token;
+    private Integer id;
 }

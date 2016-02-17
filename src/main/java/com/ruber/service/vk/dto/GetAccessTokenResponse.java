@@ -9,9 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GetAccessTokenResponse {
-    @JsonProperty("access_token")
-    private String accessToken;
-
-    @JsonProperty("user_id")
-    private Integer userId;
+    private String access_token;
+    private Integer user_id;
 }

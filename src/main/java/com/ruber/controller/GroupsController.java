@@ -19,8 +19,8 @@ public class GroupsController {
     @RequestMapping(method = RequestMethod.GET)
     public GroupsResponse getGroups(@RequestParam(value = "count", required = false) Integer count,
                              @RequestParam(value = "offset", required = false) Integer offset,
-                             @RequestParam(value = "accessToken", required = true) String accessToken) {
+                             @RequestParam(value = "access_token", required = true) String access_token) {
 
-        return groupService.getGroups(accessToken, count, offset);
+        return groupService.getGroups(access_token, count, offset);
     }
 }

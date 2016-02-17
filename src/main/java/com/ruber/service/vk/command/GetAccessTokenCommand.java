@@ -12,9 +12,9 @@ public class GetAccessTokenCommand implements VkCommand<GetAccessTokenResponse> 
     private final Map<String, Object> params = new HashMap<>();
 
     public GetAccessTokenCommand(GetAccessTokenRequest request) {
-        params.put("client_id", request.getClientId());
-        params.put("client_secret", request.getClientSecret());
-        params.put("redirect_uri", request.getRedirectURI());
+        params.put("client_id", request.getClient_id());
+        params.put("client_secret", request.getClient_secret());
+        params.put("redirect_uri", request.getRedirect_uri());
         params.put("code", request.getCode());
     }
 

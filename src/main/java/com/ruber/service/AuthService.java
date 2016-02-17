@@ -36,12 +36,12 @@ public class AuthService {
 
     public AuthResponse authenticate(AuthRequest req) {
         GetAccessTokenRequest getAccessTokenRequest =
-            new GetAccessTokenRequest(5242612, "REmRGbnkrKAqgEz2iac9", req.getRedirectURI(), req.getCode());
+            new GetAccessTokenRequest(5242612, "REmRGbnkrKAqgEz2iac9", req.getRedirect_uri(), req.getCode());
         GetAccessTokenResponse resp = vkService.getAccessToken(getAccessTokenRequest);
 
-        Integer userId = resp.getUserId();
+        Integer userId = resp.getUser_id();
 
-        vkIdToVkAccessTokenMap.put(userId, resp.getAccessToken());
+        vkIdToVkAccessTokenMap.put(userId, resp.getAccess_token());
         String ruberAccessToken = System.currentTimeMillis() + "_" + userId;
         ruberAccessTokenToVkIdMap.put(ruberAccessToken, userId);
 

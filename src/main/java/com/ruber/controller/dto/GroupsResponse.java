@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GroupsResponse {
-    private Integer totalCount;
+    private Integer count;
     private Group[] groups;
 }

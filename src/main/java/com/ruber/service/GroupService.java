@@ -21,8 +21,13 @@ public class GroupService {
 
         String vkAccessToken = authService.getVkAccessToken(accessToken);
 
+        if(count == null)
+            count = 10;
+        if(offset == null)
+            offset = 0;
+
         GetGroupsResponse groupsResponse = vkService.getGroups(count, offset, vkAccessToken);
 
-        return new GroupsResponse(groupsResponse.getTotalCount(), groupsResponse.getGroups());
+        return new GroupsResponse(groupsResponse.getCount(), groupsResponse.getGroups());
     }
 }
