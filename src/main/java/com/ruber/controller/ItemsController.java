@@ -5,6 +5,7 @@ import com.ruber.controller.dto.ItemResponse;
 import com.ruber.controller.dto.ItemsResponse;
 import com.ruber.service.ItemsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -30,5 +31,15 @@ public class ItemsController {
         @RequestParam(value = "access_token", required = true) String accessToken) {
 
         return itemsService.getItem(ownerId, id, accessToken);
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteItem(
+        @RequestParam(value = "owner_id", required = true) Integer ownerId,
+        @PathVariable("id") Integer id,
+        @RequestParam(value = "access_token", required = true) String accessToken) {
+
+        itemsService.deleteMarketItem(ownerId, id, accessToken);
     }
 }

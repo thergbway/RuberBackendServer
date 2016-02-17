@@ -2,10 +2,7 @@ package com.ruber.service.vk;
 
 import com.ruber.controller.dto.Item;
 import com.ruber.controller.dto.ItemsResponse;
-import com.ruber.service.vk.command.GetAccessTokenCommand;
-import com.ruber.service.vk.command.GetGroupsCommand;
-import com.ruber.service.vk.command.GetMarketItemCommand;
-import com.ruber.service.vk.command.GetMarketItemsCommand;
+import com.ruber.service.vk.command.*;
 import com.ruber.service.vk.dto.GetAccessTokenRequest;
 import com.ruber.service.vk.dto.GetAccessTokenResponse;
 import com.ruber.service.vk.dto.GetGroupsResponse;
@@ -27,5 +24,9 @@ public class VkService {
 
     public Item getMarketItem(Integer ownerId, Integer id, String vkAccessToken) {
         return new GetMarketItemCommand(ownerId, id, vkAccessToken).execute();
+    }
+
+    public void deleteMarketItem(Integer ownerId, Integer id, String vkAccessToken) {
+        new DeleteMarketItemCommand(ownerId, id, vkAccessToken).execute();
     }
 }

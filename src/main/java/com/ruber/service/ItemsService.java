@@ -40,4 +40,13 @@ public class ItemsService {
 
         return itemResponse;
     }
+
+    public void deleteMarketItem(Integer ownerId, Integer id, String accessToken) {
+        if (!authService.checkAccessToken(accessToken))
+            throw new RuntimeException("Invalid accessToken");
+
+        String vkAccessToken = authService.getVkAccessToken(accessToken);
+
+        vkService.deleteMarketItem(ownerId, id, vkAccessToken);
+    }
 }
