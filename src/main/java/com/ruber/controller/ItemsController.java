@@ -1,8 +1,7 @@
 package com.ruber.controller;
 
-import com.ruber.controller.dto.Item;
-import com.ruber.controller.dto.ItemResponse;
-import com.ruber.controller.dto.ItemsResponse;
+import com.ruber.controller.dto.GetItemResponse;
+import com.ruber.controller.dto.GetItemsResponse;
 import com.ruber.service.ItemsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,7 +14,7 @@ public class ItemsController {
     private ItemsService itemsService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public ItemsResponse getItems(
+    public GetItemsResponse getItems(
         @RequestParam(value = "owner_id", required = true) Integer owner_id,
         @RequestParam(value = "count", required = false) Integer count,
         @RequestParam(value = "offset", required = false) Integer offset,
@@ -25,7 +24,7 @@ public class ItemsController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ItemResponse getItem(
+    public GetItemResponse getItem(
         @RequestParam(value = "owner_id", required = true) Integer ownerId,
         @PathVariable("id") Integer id,
         @RequestParam(value = "access_token", required = true) String accessToken) {
@@ -42,4 +41,19 @@ public class ItemsController {
 
         itemsService.deleteMarketItem(ownerId, id, accessToken);
     }
+
+//    @RequestMapping(method = RequestMethod.POST)
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public void test(
+//        @RequestParam("") String addItemRequestAsString,
+//        @RequestPart("file") MultipartFile file) throws IOException {
+//
+//
+//        System.out.println(testJson);
+//        String s = IOUtils.toString(file.getInputStream());
+//        System.out.println(s);
+//
+//        return new TestJson("sdsgdrh", 4433416);
+//    }
 }
+

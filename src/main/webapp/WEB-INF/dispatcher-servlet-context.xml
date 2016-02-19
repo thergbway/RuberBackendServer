@@ -16,4 +16,7 @@
           p:viewClass="org.springframework.web.servlet.view.JstlView"
             />
 
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
+
 </beans>

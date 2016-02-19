@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class GroupsResponse {
+public class GetGroupsResponse {
     private Integer count;
     private Group[] groups;
 }

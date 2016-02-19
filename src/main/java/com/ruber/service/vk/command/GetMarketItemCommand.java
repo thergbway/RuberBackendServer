@@ -8,7 +8,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GetMarketItemCommand implements VkCommand<Item>{
+public class GetMarketItemCommand implements VkCommand<Item> {
     private final Map<String, Object> params = new HashMap<>();
 
     public GetMarketItemCommand(Integer ownerId, Integer id, String vkAccessToken) {

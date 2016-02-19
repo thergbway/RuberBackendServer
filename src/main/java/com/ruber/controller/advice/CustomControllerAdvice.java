@@ -1,7 +1,5 @@
 package com.ruber.controller.advice;
 
-import com.ruber.controller.GroupsController;
-import com.ruber.util.CaseInsensitiveEnumEditor;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.InitBinder;

@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ItemsResponse {
-    private Integer count;
-    private Item[] items;
+public class GetItemResponse {
+    private Item item;
 }

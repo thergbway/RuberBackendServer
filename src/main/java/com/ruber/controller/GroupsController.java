@@ -1,7 +1,6 @@
 package com.ruber.controller;
 
-import com.ruber.controller.dto.Group;
-import com.ruber.controller.dto.GroupsResponse;
+import com.ruber.controller.dto.GetGroupsResponse;
 import com.ruber.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,9 +16,9 @@ public class GroupsController {
     private GroupService groupService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public GroupsResponse getGroups(@RequestParam(value = "count", required = false) Integer count,
-                             @RequestParam(value = "offset", required = false) Integer offset,
-                             @RequestParam(value = "access_token", required = true) String access_token) {
+    public GetGroupsResponse getGroups(@RequestParam(value = "count", required = false) Integer count,
+                                       @RequestParam(value = "offset", required = false) Integer offset,
+                                       @RequestParam(value = "access_token", required = true) String access_token) {
 
         return groupService.getGroups(access_token, count, offset);
     }

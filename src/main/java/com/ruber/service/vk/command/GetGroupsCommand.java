@@ -9,7 +9,10 @@ import com.ruber.service.vk.dto.GetGroupsResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class GetGroupsCommand implements VkCommand<GetGroupsResponse> {
     private final Map<String, Object> params = new HashMap<>();

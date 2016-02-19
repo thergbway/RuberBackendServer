@@ -1,8 +1,8 @@
 package com.ruber.service;
 
+import com.ruber.controller.dto.GetItemResponse;
+import com.ruber.controller.dto.GetItemsResponse;
 import com.ruber.controller.dto.Item;
-import com.ruber.controller.dto.ItemResponse;
-import com.ruber.controller.dto.ItemsResponse;
 import com.ruber.service.vk.VkService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ public class ItemsService {
     @Autowired
     private VkService vkService;
 
-    public ItemsResponse getItems(Integer ownerId, Integer count, Integer offset, String accessToken) {
+    public GetItemsResponse getItems(Integer ownerId, Integer count, Integer offset, String accessToken) {
         if (!authService.checkAccessToken(accessToken))
             throw new RuntimeException("Invalid accessToken");
 
@@ -29,16 +29,15 @@ public class ItemsService {
         return vkService.getMarketItems(ownerId, count, offset, vkAccessToken);
     }
 
-    public ItemResponse getItem(Integer ownerId, Integer id, String accessToken) {
+    public GetItemResponse getItem(Integer ownerId, Integer id, String accessToken) {
         if (!authService.checkAccessToken(accessToken))
             throw new RuntimeException("Invalid accessToken");
 
         String vkAccessToken = authService.getVkAccessToken(accessToken);
 
         Item item = vkService.getMarketItem(ownerId, id, vkAccessToken);
-        ItemResponse itemResponse = new ItemResponse(item);
 
-        return itemResponse;
+        return new GetItemResponse(item);
     }
 
     public void deleteMarketItem(Integer ownerId, Integer id, String accessToken) {

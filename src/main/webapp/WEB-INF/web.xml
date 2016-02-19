@@ -31,7 +31,7 @@
             /WEB-INF/ruber-security.xml
             /WEB-INF/service-context.xml
             /WEB-INF/persistent-context.xml
-            /WEB-INF/dataSource-context.xml
+            /WEB-INF/data-source-context.xml
         </param-value>
     </context-param>
 </web-app>

@@ -1,9 +1,7 @@
 package com.ruber.service;
 
-import com.ruber.controller.dto.Group;
-import com.ruber.controller.dto.GroupsResponse;
+import com.ruber.controller.dto.GetGroupsResponse;
 import com.ruber.service.vk.VkService;
-import com.ruber.service.vk.dto.GetGroupsResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,19 +13,19 @@ public class GroupService {
     @Autowired
     private VkService vkService;
 
-    public GroupsResponse getGroups(String accessToken, Integer count, Integer offset) {
+    public GetGroupsResponse getGroups(String accessToken, Integer count, Integer offset) {
         if (!authService.checkAccessToken(accessToken))
             throw new RuntimeException("Invalid accessToken");
 
         String vkAccessToken = authService.getVkAccessToken(accessToken);
 
-        if(count == null)
+        if (count == null)
             count = 10;
-        if(offset == null)
+        if (offset == null)
             offset = 0;
 
-        GetGroupsResponse groupsResponse = vkService.getGroups(count, offset, vkAccessToken);
+        com.ruber.service.vk.dto.GetGroupsResponse getGroupsResponse = vkService.getGroups(count, offset, vkAccessToken);
 
-        return new GroupsResponse(groupsResponse.getCount(), groupsResponse.getGroups());
+        return new GetGroupsResponse(getGroupsResponse.getCount(), getGroupsResponse.getGroups());
     }
 }
