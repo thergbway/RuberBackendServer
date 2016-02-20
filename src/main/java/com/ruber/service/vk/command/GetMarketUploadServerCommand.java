@@ -11,13 +11,13 @@ import java.util.Map;
 public class GetMarketUploadServerCommand implements VkCommand<GetMarketUploadServerResponse> {
     private final Map<String, Object> params = new HashMap<>();
 
-    public GetMarketUploadServerCommand(Integer group_id, Integer main_photo,
-                                        Integer crop_x, Integer crop_y, Integer crop_width, String vkAccessToken) {
-        params.put("group_id", group_id);
-        params.put("main_photo", main_photo);
-        params.put("crop_x", crop_x);
-        params.put("crop_y", crop_y);
-        params.put("crop_width", crop_width);
+    public GetMarketUploadServerCommand(Integer groupId, Integer mainPhoto,
+                                        Integer cropX, Integer cropY, Integer cropWidth, String vkAccessToken) {
+        params.put("group_id", groupId);
+        params.put("main_photo", mainPhoto);
+        params.put("crop_x", cropX);
+        params.put("crop_y", cropY);
+        params.put("crop_width", cropWidth);
         params.put("access_token", vkAccessToken);
     }
 
@@ -33,7 +33,7 @@ public class GetMarketUploadServerCommand implements VkCommand<GetMarketUploadSe
                     if (params.get("main_photo") != null)
                         sb.append("&crop_x={crop_x}&crop_y={crop_y}&crop_width={crop_width}");
                     else
-                        throw new IllegalArgumentException("Crop parameters can be set when main_photo parameter equals 1");
+                        throw new IllegalArgumentException("Crop parameters can be set when mainPhoto parameter equals 1");
                 else
                     throw new IllegalArgumentException("Some of the parameters equal null");
 
