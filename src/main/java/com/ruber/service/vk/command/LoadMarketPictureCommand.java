@@ -2,7 +2,7 @@ package com.ruber.service.vk.command;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ruber.service.vk.VkException;
-import com.ruber.service.vk.dto.LoadPictureToMarketUploadServerResponse;
+import com.ruber.service.vk.dto.LoadMarketPictureResponse;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
@@ -10,25 +10,25 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-public class LoadPictureToMarketUploadServerCommand implements VkCommand<LoadPictureToMarketUploadServerResponse> {
+public class LoadMarketPictureCommand implements VkCommand<LoadMarketPictureResponse> {
     private final String uploadUrl;
     private final byte[] pictureBytes;
-    private final String pictureExtention;
+    private final String pictureFileName;
 
 
-    public LoadPictureToMarketUploadServerCommand(String uploadUrl, byte[] pictureBytes, String pictureExtention) {
+    public LoadMarketPictureCommand(String uploadUrl, byte[] pictureBytes, String pictureFileName) {
         this.uploadUrl = uploadUrl;
         this.pictureBytes = pictureBytes;
-        this.pictureExtention = pictureExtention;
+        this.pictureFileName = pictureFileName;
     }
 
     @Override
-    public LoadPictureToMarketUploadServerResponse execute() throws VkException {
+    public LoadMarketPictureResponse execute() throws VkException {
         try {
             Resource resource = new ByteArrayResource(pictureBytes) {
                 @Override
                 public String getFilename() {
-                    return "pictureFile." + pictureExtention;
+                    return pictureFileName;
                 }
             };
 
@@ -42,8 +42,8 @@ public class LoadPictureToMarketUploadServerCommand implements VkCommand<LoadPic
 
             ResponseEntity<String> responseEntity = new RestTemplate().exchange(uploadUrl, HttpMethod.POST, requestEntity, String.class);
 
-            LoadPictureToMarketUploadServerResponse response = new ObjectMapper().readValue(
-                responseEntity.getBody(), LoadPictureToMarketUploadServerResponse.class);
+            LoadMarketPictureResponse response = new ObjectMapper().readValue(
+                responseEntity.getBody(), LoadMarketPictureResponse.class);
 
             return response;
         } catch (Exception e) {

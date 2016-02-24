@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoadPictureToMarketUploadServerResponse {
+public class LoadMarketPictureResponse {
     private Integer server;
     private String photo;
     private String hash;

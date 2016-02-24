@@ -3,9 +3,7 @@ package com.ruber.service.vk;
 import com.ruber.controller.dto.GetItemsResponse;
 import com.ruber.controller.dto.Item;
 import com.ruber.service.vk.command.*;
-import com.ruber.service.vk.dto.GetAccessTokenRequest;
-import com.ruber.service.vk.dto.GetAccessTokenResponse;
-import com.ruber.service.vk.dto.GetGroupsResponse;
+import com.ruber.service.vk.dto.*;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,5 +26,43 @@ public class VkService {
 
     public void deleteMarketItem(Integer ownerId, Integer id, String vkAccessToken) {
         new DeleteMarketItemCommand(ownerId, id, vkAccessToken).execute();
+    }
+
+    public AddMarketItemResponse addMarketItem(String vkAccessToken, Integer ownerId, String name, String description, Integer category_id,
+                                               Double price, Integer deleted, Integer mainPhotoId, Integer... photoIds) {
+        AddMarketItemResponse response = new AddMarketItemCommand(vkAccessToken, ownerId, name, description, category_id,
+            price, deleted, mainPhotoId, photoIds).execute();
+
+        return response;
+    }
+
+    public SaveMarketPhotoResponse saveMainMarketItemPicture(Integer groupId, Integer cropX, Integer cropY, Integer cropWidth,
+                                                             String vkAccessToken, byte[] pictureBytes, String pictureFileName) {
+        return saveBasicMarketItemPhoto(groupId, 1, cropX, cropY, cropWidth, vkAccessToken, pictureBytes, pictureFileName);
+    }
+
+    public SaveMarketPhotoResponse saveNotMainMarketItemPicture(Integer groupId, String vkAccessToken,
+                                                                byte[] pictureBytes, String pictureFileName) {
+        SaveMarketPhotoResponse saveMarketPhotoResponse = saveBasicMarketItemPhoto(groupId, 0, null, null, null, vkAccessToken, pictureBytes, pictureFileName);
+
+        return saveMarketPhotoResponse;
+    }
+
+    private SaveMarketPhotoResponse saveBasicMarketItemPhoto(Integer groupId, Integer mainPhoto, Integer cropX, Integer cropY, Integer cropWidth,
+                                                             String vkAccessToken, byte[] pictureBytes, String pictureFileName) {
+        String marketUploadServerUrl = new GetMarketUploadServerCommand(-groupId, mainPhoto,
+            cropX, cropY, cropWidth, vkAccessToken)
+            .execute()
+            .getUpload_url();
+
+        LoadMarketPictureResponse loadResponse =
+            new LoadMarketPictureCommand(marketUploadServerUrl, pictureBytes, pictureFileName).execute();
+
+        SaveMarketPhotoResponse saveMarketPhotoResponse = new SaveMarketPhotoCommand(loadResponse.getPhoto(),
+            loadResponse.getServer(), loadResponse.getHash(),
+            -groupId, loadResponse.getCrop_data(), loadResponse.getCrop_hash(), vkAccessToken)
+            .execute();
+
+        return saveMarketPhotoResponse;
     }
 }

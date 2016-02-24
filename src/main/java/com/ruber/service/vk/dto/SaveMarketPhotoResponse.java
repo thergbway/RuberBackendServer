@@ -23,5 +23,4 @@ public class SaveMarketPhotoResponse {
 
     private Integer width;
     private Integer height;
-
 }
