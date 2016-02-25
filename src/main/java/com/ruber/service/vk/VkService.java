@@ -36,6 +36,14 @@ public class VkService {
         return response;
     }
 
+    public void editMarketItem(String vkAccessToken, Integer itemId, Integer ownerId, String name,
+                               String description, Integer categoryId, Double price, Integer deleted,
+                               Integer mainPhotoId, Integer... photoIds) {
+        new EditMarketItemCommand(vkAccessToken, itemId, ownerId, name, description, categoryId,
+            price, deleted, mainPhotoId, photoIds)
+            .execute();
+    }
+
     public SaveMarketPhotoResponse saveMainMarketItemPicture(Integer groupId, Integer cropX, Integer cropY, Integer cropWidth,
                                                              String vkAccessToken, byte[] pictureBytes, String pictureFileName) {
         return saveBasicMarketItemPhoto(groupId, 1, cropX, cropY, cropWidth, vkAccessToken, pictureBytes, pictureFileName);
@@ -65,4 +73,5 @@ public class VkService {
 
         return saveMarketPhotoResponse;
     }
+
 }

@@ -13,11 +13,9 @@
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"
           p:prefix="WEB-INF/views/"
           p:suffix=".jsp"
-          p:viewClass="org.springframework.web.servlet.view.JstlView"
-            />
+          p:viewClass="org.springframework.web.servlet.view.JstlView"/>
 
     <bean id="multipartResolver"
-          class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
+          class="com.ruber.util.ExtendedMultipartResolver"
             p:defaultEncoding="UTF-8"/>
-
 </beans>

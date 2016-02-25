@@ -2,6 +2,7 @@ package com.ruber.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ruber.controller.dto.AddItemRequestPart;
+import com.ruber.controller.dto.EditItemRequestPart;
 import com.ruber.controller.dto.GetItemResponse;
 import com.ruber.controller.dto.GetItemsResponse;
 import com.ruber.service.ItemsService;
@@ -41,6 +42,17 @@ public class ItemsController {
                 }
             });
 
+        binder.registerCustomEditor(EditItemRequestPart.class,
+            new PropertyEditorSupport() {
+                @Override
+                public void setAsText(String text) throws IllegalArgumentException {
+                    try {
+                        setValue(new ObjectMapper().readValue(text, EditItemRequestPart.class));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -105,5 +117,30 @@ public class ItemsController {
         headers.setLocation(uriComponents.toUri());
 
         return new ResponseEntity<>(headers, HttpStatus.CREATED);
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.OK)
+    public void editItem(
+        @PathVariable("id") Integer itemId,
+        @RequestParam(value = "access_token", required = true) String accessToken,
+        @RequestParam(value = "item_info", required = true) EditItemRequestPart itemInfo,
+
+        @RequestParam(value = "main_photo_id", required = false) Integer mainPhotoId,
+        @RequestParam(value = "photo_1_id", required = false) Integer photo1Id,
+        @RequestParam(value = "photo_2_id", required = false) Integer photo2Id,
+        @RequestParam(value = "photo_3_id", required = false) Integer photo3Id,
+        @RequestParam(value = "photo_4_id", required = false) Integer photo4Id,
+
+        @RequestPart(value = "main_photo_raw", required = false) MultipartFile mainPhotoRaw,
+        @RequestPart(value = "photo_1_raw", required = false) MultipartFile photo1Raw,
+        @RequestPart(value = "photo_2_raw", required = false) MultipartFile photo2Raw,
+        @RequestPart(value = "photo_3_raw", required = false) MultipartFile photo3Raw,
+        @RequestPart(value = "photo_4_raw", required = false) MultipartFile photo4Raw
+    ) {
+        itemsService.editItem(accessToken, itemId, itemInfo,
+            mainPhotoRaw, mainPhotoId,
+            new MultipartFile[]{photo1Raw, photo2Raw, photo3Raw, photo4Raw},
+            new Integer[]{photo1Id, photo2Id, photo3Id, photo4Id});
     }
 }
