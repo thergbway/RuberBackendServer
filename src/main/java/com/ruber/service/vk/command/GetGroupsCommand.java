@@ -39,11 +39,15 @@ public class GetGroupsCommand implements VkCommand<GetGroupsResponse> {
                     List<Group> groups = new LinkedList<>();
                     for (JsonNode next : groupsNode) {
                         Group group = new Group();
-                        group.setId(next.get("group").get("id").asInt());
-                        group.setName(next.get("group").get("name").asText());
+                        JsonNode groupNode = next.get("group");
+                        group.setId(groupNode.get("id").asInt());
+                        group.setName(groupNode.get("name").asText());
+                        group.setPhoto_50(groupNode.get("photo_50").asText());
+                        group.setPhoto_100(groupNode.get("photo_100").asText());
+                        group.setPhoto_200(groupNode.get("photo_200").asText());
 
                         Market market = new Market();
-                        if (next.get("group").get("market").get("enabled").asInt() == 1) {
+                        if (groupNode.get("market").get("enabled").asInt() == 1) {
                             market.setEnabled(true);
                             market.setItems_count(next.get("market_items").asInt());
                         } else {
