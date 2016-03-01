@@ -17,7 +17,7 @@ public class AuthService {
     private static final Map<String, Integer> ruberAccessTokenToVkIdMap = new HashMap<>();
 
     static {
-        vkIdToVkAccessTokenMap.put(146812710, "8fe86428aec9f513d5ba73057589198e8ee687325a22e7ca9dce5d9a49dbf3cd712053700748ae4178a48");
+        vkIdToVkAccessTokenMap.put(146812710, "19bd7b91a23daf445a57c2e8de16dc0a995db432eee284ae93dab8f3dcc6516b4f4e036616ddbc4734ece");
         ruberAccessTokenToVkIdMap.put("1455890049656_146812710", 146812710);
     }
 

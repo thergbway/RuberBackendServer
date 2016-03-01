@@ -33,7 +33,7 @@ public class ItemsController {
         binder.registerCustomEditor(AddItemRequestPart.class,
             new PropertyEditorSupport() {
                 @Override
-                public void setAsText(String text) throws IllegalArgumentException {
+                public void setAsText(String text) {
                     try {
                         setValue(new ObjectMapper().readValue(text, AddItemRequestPart.class));
                     } catch (IOException e) {
@@ -45,7 +45,7 @@ public class ItemsController {
         binder.registerCustomEditor(EditItemRequestPart.class,
             new PropertyEditorSupport() {
                 @Override
-                public void setAsText(String text) throws IllegalArgumentException {
+                public void setAsText(String text) {
                     try {
                         setValue(new ObjectMapper().readValue(text, EditItemRequestPart.class));
                     } catch (IOException e) {

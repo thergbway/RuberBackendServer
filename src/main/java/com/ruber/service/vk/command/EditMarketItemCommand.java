@@ -55,9 +55,10 @@ public class EditMarketItemCommand implements VkCommand<Void> {
             String response = new RestTemplate().getForObject(sb.toString(), String.class, params);
 
             int result = new ObjectMapper().readTree(response).get("response").asInt();
+
+            return null;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return null;
     }
 }
