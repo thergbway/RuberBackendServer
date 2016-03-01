@@ -18,21 +18,6 @@ public class GroupsController {
     @Autowired
     private GroupService groupService;
 
-    @InitBinder
-    private void initBinder(WebDataBinder binder) {
-        binder.registerCustomEditor(EditGroupRequest.class,
-            new PropertyEditorSupport(){
-                @Override
-                public void setAsText(String text) {
-                    try {
-                        setValue(new ObjectMapper().readValue(text, EditGroupRequest.class));
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            });
-    }
-
     @RequestMapping(method = RequestMethod.GET)
     public GetGroupsResponse getGroups(@RequestParam(value = "count", required = false) Integer count,
                                        @RequestParam(value = "offset", required = false) Integer offset,
@@ -46,7 +31,7 @@ public class GroupsController {
     public void editGroup(
         @RequestParam(value = "access_token", required = true) String accessToken,
         @PathVariable("id") Integer groupId,
-        @RequestParam(value = "group_info", required = true) EditGroupRequest groupInfo) {
+        @RequestBody(required = true) EditGroupRequest groupInfo) {
 
         groupService.editGroup(groupId, groupInfo, accessToken);
     }
