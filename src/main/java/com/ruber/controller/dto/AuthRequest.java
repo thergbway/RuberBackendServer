@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AuthRequest {
-    private String code;
-    private String redirect_uri;
+    private String vk_access_token;
+    private Integer vk_user_id;
     private Integer ruber_app_id;
     private String ruber_app_secret;
 }

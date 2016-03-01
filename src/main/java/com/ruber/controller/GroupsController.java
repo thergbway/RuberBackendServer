@@ -1,16 +1,11 @@
 package com.ruber.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ruber.controller.dto.EditGroupRequest;
 import com.ruber.controller.dto.GetGroupsResponse;
 import com.ruber.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-
-import java.beans.PropertyEditorSupport;
-import java.io.IOException;
 
 @RestController
 @RequestMapping("/groups")

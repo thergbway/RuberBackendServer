@@ -3,15 +3,14 @@ package com.ruber.service.vk;
 import com.ruber.controller.dto.GetItemsResponse;
 import com.ruber.controller.dto.Item;
 import com.ruber.service.vk.command.*;
-import com.ruber.service.vk.dto.*;
+import com.ruber.service.vk.dto.AddMarketItemResponse;
+import com.ruber.service.vk.dto.GetGroupsResponse;
+import com.ruber.service.vk.dto.LoadMarketPictureResponse;
+import com.ruber.service.vk.dto.SaveMarketPhotoResponse;
 import org.springframework.stereotype.Service;
 
 @Service
 public class VkService {
-    public GetAccessTokenResponse getAccessToken(GetAccessTokenRequest request) throws VkException {
-        return new GetAccessTokenCommand(request).execute();
-    }
-
     public GetGroupsResponse getGroups(Integer count, Integer offset, String vkAccessToken) throws VkException {
         return new GetGroupsCommand(count, offset, vkAccessToken).execute();
     }
