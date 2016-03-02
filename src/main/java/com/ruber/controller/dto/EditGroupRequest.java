@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class EditGroupRequest {
     private Integer market;
     private Integer messages;
+    private Integer market_contact;
 }

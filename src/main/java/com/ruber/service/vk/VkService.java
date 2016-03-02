@@ -15,8 +15,8 @@ public class VkService {
         return new GetGroupsCommand(count, offset, vkAccessToken).execute();
     }
 
-    public void editGroup(Integer groupId, Integer market, Integer messages, String vkAccessToken) {
-        new EditGroupCommand(groupId, market, messages, vkAccessToken).execute();
+    public void editGroup(Integer groupId, Integer market, Integer messages, Integer marketContact, String vkAccessToken) {
+        new EditGroupCommand(groupId, market, messages, marketContact, vkAccessToken).execute();
     }
 
     public GetItemsResponse getMarketItems(Integer ownerId, Integer count, Integer offset, String vkAccessToken) {

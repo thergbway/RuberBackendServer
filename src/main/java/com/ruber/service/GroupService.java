@@ -36,6 +36,6 @@ public class GroupService {
 
         String vkAccessToken = authService.getVkAccessToken(accessToken);
 
-        vkService.editGroup(groupId, groupInfo.getMarket(), groupInfo.getMessages(), vkAccessToken);
+        vkService.editGroup(groupId, groupInfo.getMarket(), groupInfo.getMessages(), groupInfo.getMarket_contact(), vkAccessToken);
     }
 }
