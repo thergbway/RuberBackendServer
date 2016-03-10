@@ -7,10 +7,6 @@
 
     <display-name>Ruber Backend Server Application</display-name>
 
-    <listener>
-        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-    </listener>
-
     <servlet>
         <servlet-name>dispatcher</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
@@ -24,14 +20,4 @@
         <servlet-name>dispatcher</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
-
-    <context-param>
-        <param-name>contextConfigLocation</param-name>
-        <param-value>
-            /WEB-INF/ruber-security.xml
-            /WEB-INF/service-context.xml
-            /WEB-INF/persistent-context.xml
-            /WEB-INF/data-source-context.xml
-        </param-value>
-    </context-param>
 </web-app>
