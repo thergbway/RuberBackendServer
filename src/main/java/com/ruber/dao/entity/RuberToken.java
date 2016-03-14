@@ -9,18 +9,21 @@ import java.util.Set;
 
 import static javax.persistence.FetchType.EAGER;
 
-@Entity
-@Table(name = "ruber_token")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@NamedQuery(name = "getByVkToken", query = "select r from RuberToken r where :vkToken member of r.vkTokens")
+
+@Entity
+@Table(name = "ruber_token")
+@NamedQueries({
+    @NamedQuery(name = "RuberToken.getByValue", query = "select r from RuberToken r where r.value = :ruberToken")
+})
 public class RuberToken {
     @Id
     @Column(name = "user_id")
     private Integer userId;
 
-    @Column(name = "token")
+    @Column(name = "token", unique = true, nullable = false)
     private String value;
 
     @ElementCollection(fetch = EAGER)

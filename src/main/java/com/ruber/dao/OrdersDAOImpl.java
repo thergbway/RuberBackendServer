@@ -1,19 +1,18 @@
 package com.ruber.dao;
 
-import com.ruber.dao.entity.RuberToken;
+import com.ruber.dao.entity.Order;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.List;
 
 import static org.springframework.transaction.annotation.Isolation.READ_COMMITTED;
 import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 
 @Repository
-public class RuberTokenDAOImpl implements RuberTokenDAO {
+public class OrdersDAOImpl implements OrdersDAO {
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -22,7 +21,7 @@ public class RuberTokenDAOImpl implements RuberTokenDAO {
         propagation = REQUIRES_NEW,
         readOnly = false
     )
-    public void create(RuberToken e) {
+    public void create(Order e) {
         entityManager.persist(e);
     }
 
@@ -32,8 +31,8 @@ public class RuberTokenDAOImpl implements RuberTokenDAO {
         isolation = READ_COMMITTED,
         readOnly = true
     )
-    public RuberToken read(Integer userId) {
-        return entityManager.find(RuberToken.class, userId);
+    public Order read(Integer id) {
+        return entityManager.find(Order.class, id);
     }
 
     @Override
@@ -41,7 +40,7 @@ public class RuberTokenDAOImpl implements RuberTokenDAO {
         propagation = REQUIRES_NEW,
         readOnly = false
     )
-    public void update(RuberToken e) {
+    public void update(Order e) {
         entityManager.refresh(e);
     }
 
@@ -50,26 +49,7 @@ public class RuberTokenDAOImpl implements RuberTokenDAO {
         propagation = REQUIRES_NEW,
         readOnly = false
     )
-    public void delete(Integer userId) {
-        entityManager.remove(read(userId));
-    }
-
-    @Override
-    @Transactional(
-        propagation = REQUIRED,
-        isolation = READ_COMMITTED,
-        readOnly = true
-    )
-    public RuberToken getByValue(String ruberToken) {
-        List<RuberToken> tokens = entityManager
-            .createNamedQuery("RuberToken.getByValue", RuberToken.class)
-            .setParameter("ruberToken", ruberToken)
-            .setMaxResults(1)
-            .getResultList();
-
-        if (tokens == null || tokens.isEmpty())
-            return null;
-        else
-            return tokens.get(0);
+    public void delete(Integer id) {
+        entityManager.remove(read(id));
     }
 }

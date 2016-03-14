@@ -22,5 +22,5 @@
 
     <bean id="multipartResolver"
           class="com.ruber.util.ExtendedMultipartResolver"
-            p:defaultEncoding="UTF-8"/>
+          p:defaultEncoding="UTF-8"/>
 </beans>
