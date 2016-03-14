@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -74,11 +75,14 @@ public class Order {
     }
 
     public static Order buildFromAddOrderRequest(AddOrderRequest orderRequest, Integer ownerId) {
-        List<OrderPosition> orderPositions = orderRequest
-            .getOrder_positions()
-            .stream()
-            .map(OrderPosition::buildFromAddOrderRequestPosition)
-            .collect(Collectors.toList());
+        List<OrderPosition> orderPositions = new LinkedList<>();
+        if (orderRequest.getOrder_positions() != null) {
+            orderPositions = orderRequest
+                .getOrder_positions()
+                .stream()
+                .map(OrderPosition::buildFromAddOrderRequestPosition)
+                .collect(Collectors.toList());
+        }
 
         return new Order(
             orderRequest.getTitle(),

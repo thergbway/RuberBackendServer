@@ -24,19 +24,19 @@ public class OrderPosition {
     @Column(name = "vk_owner_id")
     private Integer vkOwnerId;
 
-    @Column(name = "title")
+    @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "description")
+    @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(name = "price")
+    @Column(name = "price", nullable = false)
     private Integer price;
 
-    @Column(name = "amount")
+    @Column(name = "amount", nullable = false)
     private Integer amount;
 
-    @Column(name = "thumb_photo")
+    @Column(name = "thumb_photo", nullable = false)
     private String thumbPhoto;
 
     public OrderPosition(Integer vkId, Integer vkOwnerId, String title,
