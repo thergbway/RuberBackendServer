@@ -8,68 +8,39 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
-import static org.springframework.transaction.annotation.Isolation.READ_COMMITTED;
-import static org.springframework.transaction.annotation.Propagation.REQUIRED;
-import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
-
 @Repository
+@Transactional
 public class RuberTokenDAOImpl implements RuberTokenDAO {
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
-    @Transactional(
-        propagation = REQUIRES_NEW,
-        readOnly = false
-    )
+    public boolean isRuberTokenValueExists(String token) {
+        List<RuberToken> tokens = entityManager//TODO
+            .createNamedQuery("RuberToken.getByValue", RuberToken.class)
+            .setParameter("value", token)
+            .getResultList();
+
+        return tokens.size() != 0;
+    }
+
+    @Override
     public void create(RuberToken e) {
         entityManager.persist(e);
     }
 
     @Override
-    @Transactional(
-        propagation = REQUIRED,
-        isolation = READ_COMMITTED,
-        readOnly = true
-    )
-    public RuberToken read(Integer userId) {
-        return entityManager.find(RuberToken.class, userId);
+    public RuberToken read(Integer id) {
+        return entityManager.find(RuberToken.class, id);
     }
 
     @Override
-    @Transactional(
-        propagation = REQUIRES_NEW,
-        readOnly = false
-    )
     public void update(RuberToken e) {
         entityManager.refresh(e);
     }
 
     @Override
-    @Transactional(
-        propagation = REQUIRES_NEW,
-        readOnly = false
-    )
-    public void delete(Integer userId) {
-        entityManager.remove(read(userId));
-    }
-
-    @Override
-    @Transactional(
-        propagation = REQUIRED,
-        isolation = READ_COMMITTED,
-        readOnly = true
-    )
-    public RuberToken getByValue(String ruberToken) {
-        List<RuberToken> tokens = entityManager
-            .createNamedQuery("RuberToken.getByValue", RuberToken.class)
-            .setParameter("ruberToken", ruberToken)
-            .setMaxResults(1)
-            .getResultList();
-
-        if (tokens == null || tokens.isEmpty())
-            return null;
-        else
-            return tokens.get(0);
+    public void delete(Integer id) {
+        entityManager.remove(entityManager.find(RuberToken.class, id));
     }
 }

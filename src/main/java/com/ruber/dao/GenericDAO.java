@@ -1,5 +1,6 @@
 package com.ruber.dao;
 
+//TODO попробовать вынести логику в этот абстрактный класс
 public interface GenericDAO<Entity> {
 
     void create(Entity e);

@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.net.URL;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
@@ -14,18 +13,15 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @AllArgsConstructor
 
 @Entity
-@Table(name = "order_positions")
-@Inheritance(strategy = InheritanceType.JOINED)
-public abstract class OrderPosition {
+@Table(name = "files")
+public class File {
     @Id
     @GeneratedValue(strategy = SEQUENCE)
     private Integer id;
 
     @Column(nullable = false)
-    private String title;
+    private byte[] content;
 
-    private String description;
-
-    @Column(name = "thumb_photo", nullable = false)
-    private URL thumbPhoto;
+    @Column(name = "file_name", nullable = false)
+    private String fileName;
 }

@@ -5,29 +5,21 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Set;
 
-import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.GenerationType.SEQUENCE;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 
 @Entity
-@Table(name = "ruber_token")
-@NamedQueries({
-    @NamedQuery(name = "RuberToken.getByValue", query = "select r from RuberToken r where r.value = :ruberToken")
-})
+@Table(name = "ruber_tokens")
+@NamedQuery(name = "RuberToken.getByValue", query = "select r from RuberToken r where :value = r.value")
 public class RuberToken {
     @Id
-    @Column(name = "user_id")
-    private Integer userId;
+    @GeneratedValue(strategy = SEQUENCE)
+    private Integer id;
 
-    @Column(name = "token", unique = true, nullable = false)
+    @Column(nullable = false, unique = true)
     private String value;
-
-    @ElementCollection(fetch = EAGER)
-    @CollectionTable(name = "vk_token", joinColumns = @JoinColumn(name = "user_id"))
-    @Column(name = "token")
-    private Set<String> vkTokens;
 }

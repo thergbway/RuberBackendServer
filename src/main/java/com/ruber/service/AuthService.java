@@ -2,55 +2,46 @@ package com.ruber.service;
 
 import com.ruber.controller.dto.AuthRequest;
 import com.ruber.controller.dto.AuthResponse;
-import com.ruber.dao.RuberTokenDAO;
-import com.ruber.dao.entity.RuberToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-
 @Service
+@Transactional//TODO
 public class AuthService {
+    @Autowired
+    private ExternalAppCredentialsService externalAppCredentialsService;
 
     @Autowired
-    private RuberTokenDAO ruberTokenDAO;
+    private UsersService usersService;
 
-    public boolean checkAccessToken(String ruberAccessToken) {
-        return ruberTokenDAO.getByValue(ruberAccessToken) != null;
-    }
-
-    public String getVkAccessToken(String ruberAccessToken) {
-        RuberToken ruberToken = ruberTokenDAO.getByValue(ruberAccessToken);
-
-        return ruberToken.getVkTokens().toArray(new String[0])[0];
-    }
-
-    public Integer getUserId(String ruberToken) {
-        return ruberTokenDAO.getByValue(ruberToken).getUserId();
-    }
+    @Autowired
+    private RuberTokensService ruberTokensService;
 
     @Transactional(
         propagation = Propagation.REQUIRES_NEW,
         isolation = Isolation.SERIALIZABLE
     )
     public AuthResponse authenticate(AuthRequest req) {
-        Integer userId = req.getVk_user_id();
+        if (!externalAppCredentialsService.checkCredentials(req.getRuber_app_id(), req.getRuber_app_secret()))
+            throw new RuntimeException("Invalid external application credentials");
+
+        String ruberToken = ruberTokensService.getNextToken();
+
+        Integer vkId = req.getVk_user_id();
         String vkToken = req.getVk_access_token();
 
-        if (ruberTokenDAO.read(userId) == null) {
-            RuberToken ruberToken = new RuberToken(userId,
-                System.currentTimeMillis() + "_" + userId, Collections.singleton(vkToken));
-            ruberTokenDAO.create(ruberToken);
-            return new AuthResponse(ruberToken.getValue(), userId);
+        if (usersService.isUserExist(vkId)) {
+            usersService.addVkTokenToUser(vkId, vkToken);
+            usersService.addRuberTokenToUser(vkId, ruberToken);
         } else {
-            RuberToken ruberToken = ruberTokenDAO.read(userId);
-            ruberToken.getVkTokens().add(vkToken);
-            ruberTokenDAO.update(ruberToken);
-
-            return new AuthResponse(ruberToken.getValue(), userId);
+            usersService.addUser(vkId, vkToken, ruberToken);
         }
+
+        return new AuthResponse(ruberToken, vkId);
     }
+
+
 }

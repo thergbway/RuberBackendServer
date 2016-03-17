@@ -1,43 +1,44 @@
 package com.ruber.service;
 
 import com.ruber.controller.dto.AddOrderRequest;
-import com.ruber.dao.OrdersDAO;
+import com.ruber.dao.OrderDAO;
+import com.ruber.dao.UserDAO;
 import com.ruber.dao.entity.Order;
+import com.ruber.dao.entity.User;
+import com.ruber.util.TimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional//TODO
 public class OrdersService {
     @Autowired
-    private AuthService authService;
+    private RuberTokensService ruberTokensService;
 
     @Autowired
-    private OrdersDAO ordersDAO;
+    private UserDAO userDAO;
 
-    public Integer addOrder(String accessToken, AddOrderRequest orderInfo) {
-        if (!authService.checkAccessToken(accessToken))
-            throw new RuntimeException("Invalid accessToken");
+    @Autowired
+    private OrderDAO orderDAO;
 
-        Integer userId = authService.getUserId(accessToken);
+    public Integer addOrder(String accessToken, AddOrderRequest addOrderRequest) {
+        if (!ruberTokensService.isValidToken(accessToken)) {
+            throw new RuntimeException("Invalid access token");
+        }
 
-        Order order = Order.buildFromAddOrderRequest(orderInfo, userId);
+        User user = userDAO.getByRuberToken(accessToken);
 
-        ordersDAO.create(order);
+        Long createdTimestamp = TimeUtils.getCurrentTimestamp();
+
+        Order order = addOrderRequest.toOrder(createdTimestamp);
+
+        user
+            .getOrders()
+            .add(order);
+
+        orderDAO.create(order);
 
         return order.getId();
-    }
-
-    public Order getOrder(String accessToken, Integer orderId) {
-        if (!authService.checkAccessToken(accessToken))
-            throw new RuntimeException("Invalid accessToken");
-
-        Integer userId = authService.getUserId(accessToken);
-
-        Order order = ordersDAO.read(orderId);
-
-        if (!order.getOwnerId().equals(userId))
-            throw new RuntimeException("Order does not belong to this user");
-
-        return order;
     }
 }

@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.net.URL;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
@@ -14,18 +13,12 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @AllArgsConstructor
 
 @Entity
-@Table(name = "order_positions")
-@Inheritance(strategy = InheritanceType.JOINED)
-public abstract class OrderPosition {
+@Table(name = "vk_tokens")
+public class VkToken {
     @Id
     @GeneratedValue(strategy = SEQUENCE)
     private Integer id;
 
-    @Column(nullable = false)
-    private String title;
-
-    private String description;
-
-    @Column(name = "thumb_photo", nullable = false)
-    private URL thumbPhoto;
+    @Column(nullable = false, unique = true)
+    private String value;
 }
