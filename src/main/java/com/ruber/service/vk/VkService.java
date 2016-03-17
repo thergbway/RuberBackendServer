@@ -1,31 +1,28 @@
 package com.ruber.service.vk;
 
-import com.ruber.controller.dto.GetItemsResponse;
-import com.ruber.controller.dto.Item;
 import com.ruber.service.vk.command.*;
 import com.ruber.service.vk.dto.AddMarketItemResponse;
-import com.ruber.service.vk.dto.GetGroupsResponse;
 import com.ruber.service.vk.dto.LoadMarketPictureResponse;
 import com.ruber.service.vk.dto.SaveMarketPhotoResponse;
 import org.springframework.stereotype.Service;
 
 @Service
 public class VkService {
-    public GetGroupsResponse getGroups(Integer count, Integer offset, String vkAccessToken) throws VkException {
-        return new GetGroupsCommand(count, offset, vkAccessToken).execute();
-    }
+//    public GetGroupsResponse getGroups(Integer count, Integer offset, String vkAccessToken) throws VkException {
+//        return new GetGroupsCommand(count, offset, vkAccessToken).execute();
+//    }
 
     public void editGroup(Integer groupId, Integer market, Integer messages, Integer marketContact, String vkAccessToken) {
         new EditGroupCommand(groupId, market, messages, marketContact, vkAccessToken).execute();
     }
 
-    public GetItemsResponse getMarketItems(Integer ownerId, Integer count, Integer offset, String vkAccessToken) {
-        return new GetMarketItemsCommand(ownerId, count, offset, vkAccessToken).execute();
-    }
+//    public GetItemsResponse getMarketItems(Integer ownerId, Integer count, Integer offset, String vkAccessToken) {
+//        return new GetMarketItemsCommand(ownerId, count, offset, vkAccessToken).execute();
+//    }
 
-    public Item getMarketItem(Integer ownerId, Integer id, String vkAccessToken) {
-        return new GetMarketItemCommand(ownerId, id, vkAccessToken).execute();
-    }
+//    public Item getMarketItem(Integer ownerId, Integer id, String vkAccessToken) {
+//        return new GetMarketItemCommand(ownerId, id, vkAccessToken).execute();
+//    }
 
     public void deleteMarketItem(Integer ownerId, Integer id, String vkAccessToken) {
         new DeleteMarketItemCommand(ownerId, id, vkAccessToken).execute();
