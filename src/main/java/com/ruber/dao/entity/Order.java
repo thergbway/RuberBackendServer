@@ -26,6 +26,7 @@ public class Order {
 
     private String description;
 
+    @Column(nullable = false)
     private OrderStatus status;
 
     @Column(name = "created_timestamp", nullable = false)

@@ -17,7 +17,7 @@ import java.net.URL;
 
 @Entity
 @Table(name = "vk_item_replicas")
-@PrimaryKeyJoinColumn(name = "id")
+@PrimaryKeyJoinColumn(name = "order_position_id")
 public class VkItemReplica extends ItemReplica {
     @Column(name = "vk_id", nullable = false)
     private Integer vkId;

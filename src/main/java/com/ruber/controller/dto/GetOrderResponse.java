@@ -49,7 +49,7 @@ public class GetOrderResponse {
         response.setDeadline_timestamp(o.getDeadlineTimestamp());
         response.setCustomer(Customer.buildFromEntity(o.getCustomer()));
 
-        if(o.getDiscount() != null)
+        if (o.getDiscount() != null)
             response.setDiscount(Discount.buildFromEntity(o.getDiscount()));
 
         if (o.getShipment() != null)

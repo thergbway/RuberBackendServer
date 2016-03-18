@@ -17,7 +17,7 @@ import java.net.URL;
 
 @Entity
 @Table(name = "item_replicas")
-@PrimaryKeyJoinColumn(name = "id")
+@PrimaryKeyJoinColumn(name = "order_position_id")
 public class ItemReplica extends OrderPosition {
     @Column(nullable = false)
     private BigDecimal price;

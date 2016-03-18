@@ -16,6 +16,9 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Entity
 @Table(name = "order_positions")
 @Inheritance(strategy = InheritanceType.JOINED)
+@NamedQueries({
+    @NamedQuery(name = "OrderPosition.deleteById", query = "delete from OrderPosition p where p.id = :positionId")
+})
 public abstract class OrderPosition {
     @Id
     @GeneratedValue(strategy = SEQUENCE)

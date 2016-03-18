@@ -45,7 +45,6 @@ public class OrdersController {
         @RequestParam(value = "access_token", required = true) String accessToken,
         @PathVariable("id") Integer orderId) {
 
-        GetOrderResponse response = ordersService.getOrder(accessToken, orderId);
-        return response;
+        return ordersService.getOrder(accessToken, orderId);
     }
 }

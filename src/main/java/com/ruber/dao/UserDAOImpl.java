@@ -8,9 +8,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
-import static org.springframework.transaction.annotation.Isolation.DEFAULT;
-import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
-
 @Repository
 @Transactional
 public class UserDAOImpl implements UserDAO {
@@ -48,10 +45,6 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    @Transactional(
-        propagation = REQUIRES_NEW,
-        isolation = DEFAULT
-    )
     public void update(User e) {
         entityManager.refresh(e);
     }
