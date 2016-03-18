@@ -66,7 +66,7 @@ public class FillDatabaseService {
             RuberToken r1 = new RuberToken(null, "abc123");
             RuberToken r2 = new RuberToken(null, "def456");
 
-            Discount d1 = new Discount(null, "A discount for you!", "Discount description", new URL("http://google.com/pic1.jpg"), new BigDecimal("500.00"));
+            Discount d1 = new Discount(null, "A discount for you!", "Discount description", new URL("http://google.com/pic1.jpg"), new BigDecimal("-500.00"));
 
             ItemReplica ir1 = new ItemReplica(null, "itemReplica1", "itemReplica1 description", new URL("http://google.com/pic2.png"), new BigDecimal("100.54"), 2);
             ItemReplica ir2 = new ItemReplica(null, "itemReplica2", "itemReplica2 description", new URL("http://google.com/pic3.png"), new BigDecimal("400.12"), 11);

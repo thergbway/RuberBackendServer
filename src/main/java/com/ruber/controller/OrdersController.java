@@ -1,15 +1,13 @@
 package com.ruber.controller;
 
 import com.ruber.controller.dto.AddOrderRequest;
+import com.ruber.controller.dto.GetOrderResponse;
 import com.ruber.service.OrdersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -40,5 +38,14 @@ public class OrdersController {
         headers.setLocation(uriComponents.toUri());
 
         return new ResponseEntity<>(headers, HttpStatus.CREATED);
+    }
+
+    @RequestMapping("/{id}")
+    public GetOrderResponse getOrder(
+        @RequestParam(value = "access_token", required = true) String accessToken,
+        @PathVariable("id") Integer orderId) {
+
+        GetOrderResponse response = ordersService.getOrder(accessToken, orderId);
+        return response;
     }
 }

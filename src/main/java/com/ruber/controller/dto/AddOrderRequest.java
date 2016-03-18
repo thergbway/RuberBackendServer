@@ -35,7 +35,9 @@ public class AddOrderRequest {
         LinkedList<OrderPosition> orderPositions = new LinkedList<>();
         orderPositions.addAll(itemReplicas);
         orderPositions.addAll(vkItemReplicas);
-        orderPositions.add(discount.toEntity());
+
+        if (discount != null)
+            orderPositions.add(discount.toEntity());
 
         return new Order(
             null,
@@ -44,7 +46,7 @@ public class AddOrderRequest {
             status,
             createdTimestamp,
             deadline_timestamp,
-            shipment.toEntity(),
+            shipment != null ? shipment.toEntity() : null,
             orderPositions,
             customer.toEntity(),
             Collections.<PinnedMessage>emptyList(),
