@@ -35,6 +35,10 @@ public class Order {
     private Long deadlineTimestamp;
 
     @OneToOne(cascade = ALL)
+    @JoinColumn(name = "discount_id")
+    private Discount discount;
+
+    @OneToOne(cascade = ALL)
     @JoinColumn(name = "shipment_id")
     private Shipment shipment;
 

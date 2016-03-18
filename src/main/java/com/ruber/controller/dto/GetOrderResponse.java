@@ -27,14 +27,11 @@ public class GetOrderResponse {
     }
 
     public static GetOrderResponse buildFromOrder(Order o) {
-        final Discount[] discount = {null};
         LinkedList<ItemReplica> itemReplicas = new LinkedList<>();
         LinkedList<VkItemReplica> vkItemReplicas = new LinkedList<>();
 
         o.getOrderPositions().forEach(position -> {
-            if (position instanceof com.ruber.dao.entity.Discount)
-                discount[0] = Discount.buildFromEntity((com.ruber.dao.entity.Discount) position);
-            else if (position instanceof com.ruber.dao.entity.VkItemReplica)
+            if (position instanceof com.ruber.dao.entity.VkItemReplica)
                 vkItemReplicas.add(VkItemReplica.buildFromEntity((com.ruber.dao.entity.VkItemReplica) position));
             else if (position instanceof com.ruber.dao.entity.ItemReplica)
                 itemReplicas.add(ItemReplica.buildFromEntity((com.ruber.dao.entity.ItemReplica) position));
@@ -52,10 +49,12 @@ public class GetOrderResponse {
         response.setDeadline_timestamp(o.getDeadlineTimestamp());
         response.setCustomer(Customer.buildFromEntity(o.getCustomer()));
 
+        if(o.getDiscount() != null)
+            response.setDiscount(Discount.buildFromEntity(o.getDiscount()));
+
         if (o.getShipment() != null)
             response.setShipment(Shipment.buildFromEntity(o.getShipment()));
 
-        response.setDiscount(discount[0]);
         response.setItem_replicas(itemReplicas);
         response.setVk_item_replicas(vkItemReplicas);
 
@@ -64,7 +63,6 @@ public class GetOrderResponse {
 
     @Data
     private static class Discount {
-        private Integer id;
         private String title;
         private String description;
         private URL thumb_photo;
@@ -76,7 +74,6 @@ public class GetOrderResponse {
         public static Discount buildFromEntity(com.ruber.dao.entity.Discount entity) {
             Discount discount = new Discount();
 
-            discount.setId(entity.getId());
             discount.setTitle(entity.getTitle());
             discount.setDescription(entity.getDescription());
             discount.setThumb_photo(entity.getThumbPhoto());

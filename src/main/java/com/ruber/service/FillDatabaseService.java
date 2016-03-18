@@ -75,8 +75,8 @@ public class FillDatabaseService {
             VkItemReplica vir2 = new VkItemReplica(null, "vkItem2", "vkItem2 desc", new URL("http://google.com/pic5.gif"), new BigDecimal("700.00"), 3, 77889900, 77778888);
             VkItemReplica vir3 = new VkItemReplica(null, "vkItem3", "vkItem3 desc", new URL("http://google.com/pic6.gif"), new BigDecimal("25.05"), 4, 77889900, 22223333);
 
-            Order o1 = new Order(null, "order1", "order1 desc", WAITING, 67890L, 10067890L, sh1, Arrays.asList(d1, ir1, vir1, vir2), c1, Arrays.asList(m1, m2, m3), Arrays.asList(t1, t2), Arrays.asList(f4, f5));
-            Order o2 = new Order(null, "order2", null, PAID, 67890L, null, null, Arrays.asList(ir2, vir3), c1, new LinkedList<>(), Collections.singletonList(t3), Collections.singletonList(f6));
+            Order o1 = new Order(null, "order1", "order1 desc", WAITING, 67890L, 10067890L, d1 ,sh1, Arrays.asList(ir1, vir1, vir2), c1, Arrays.asList(m1, m2, m3), Arrays.asList(t1, t2), Arrays.asList(f4, f5));
+            Order o2 = new Order(null, "order2", null, PAID, 67890L, null, null, null, Arrays.asList(ir2, vir3), c1, new LinkedList<>(), Collections.singletonList(t3), Collections.singletonList(f6));
 
             User user = new User(null, 12345000, Arrays.asList(r1, r2), Arrays.asList(v1, v2, v3), Arrays.asList(o1, o2));
 

@@ -36,9 +36,6 @@ public class AddOrderRequest {
         orderPositions.addAll(itemReplicas);
         orderPositions.addAll(vkItemReplicas);
 
-        if (discount != null)
-            orderPositions.add(discount.toEntity());
-
         return new Order(
             null,
             title,
@@ -46,6 +43,7 @@ public class AddOrderRequest {
             status,
             createdTimestamp,
             deadline_timestamp,
+            discount != null ? discount.toEntity() : null,
             shipment != null ? shipment.toEntity() : null,
             orderPositions,
             customer.toEntity(),

@@ -1,29 +1,35 @@
 package com.ruber.dao.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.net.URL;
 
+import static javax.persistence.GenerationType.SEQUENCE;
+
 @Data
-@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
+@AllArgsConstructor
 
 @Entity
 @Table(name = "discounts")
-@PrimaryKeyJoinColumn(name = "id")
-public class Discount extends OrderPosition {
+public class Discount {
+    @Id
+    @GeneratedValue(strategy = SEQUENCE)
+    private Integer id;
+
+    @Column(nullable = false)
+    private String title;
+
+    private String description;
+
+    @Column(name = "thumb_photo", nullable = false)
+    private URL thumbPhoto;
+
     @Column(nullable = false)
     private BigDecimal cost;
-
-    public Discount(Integer id, String title, String description, URL thumbPhoto, BigDecimal cost) {
-        super(id, title, description, thumbPhoto);
-        this.cost = cost;
-    }
 }
