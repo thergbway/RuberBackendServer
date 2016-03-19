@@ -2,6 +2,7 @@ package com.ruber.service;
 
 import com.ruber.controller.dto.AddOrderRequest;
 import com.ruber.controller.dto.GetOrderResponse;
+import com.ruber.controller.dto.OrderPreview;
 import com.ruber.dao.OrderDAO;
 import com.ruber.dao.UserDAO;
 import com.ruber.dao.entity.Order;
@@ -66,5 +67,19 @@ public class OrdersService {
         Order order = orders.get(0);
 
         return GetOrderResponse.buildFromOrder(order);
+    }
+
+    public List<OrderPreview> getOrdersPreview(String accessToken) {
+        if (!ruberTokensService.isValidToken(accessToken)) {
+            throw new RuntimeException("Invalid access token");
+        }
+
+        User user = userDAO.getByRuberToken(accessToken);
+
+        return user
+            .getOrders()
+            .stream()
+            .map(OrderPreview::buildFromEntity)
+            .collect(Collectors.toList());
     }
 }

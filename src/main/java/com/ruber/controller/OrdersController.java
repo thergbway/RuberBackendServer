@@ -2,6 +2,7 @@ package com.ruber.controller;
 
 import com.ruber.controller.dto.AddOrderRequest;
 import com.ruber.controller.dto.GetOrderResponse;
+import com.ruber.controller.dto.OrderPreview;
 import com.ruber.service.OrdersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -10,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.List;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -38,6 +41,13 @@ public class OrdersController {
         headers.setLocation(uriComponents.toUri());
 
         return new ResponseEntity<>(headers, HttpStatus.CREATED);
+    }
+
+    @RequestMapping
+    public List<OrderPreview> getOrdersPreview(
+        @RequestParam(value = "access_token", required = true) String accessToken) {
+
+        return ordersService.getOrdersPreview(accessToken);
     }
 
     @RequestMapping("/{id}")
