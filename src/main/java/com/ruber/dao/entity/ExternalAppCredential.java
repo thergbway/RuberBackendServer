@@ -26,5 +26,6 @@ public class ExternalAppCredential {
     @Column(name = "app_secret", nullable = false, unique = true)
     private String appSecret;
 
+    @Column(nullable = false)
     private String description;
 }

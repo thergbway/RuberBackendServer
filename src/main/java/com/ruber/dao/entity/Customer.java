@@ -22,6 +22,7 @@ public class Customer {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private String phone;
 
     @Column(name = "vk_id")
