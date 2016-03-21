@@ -27,6 +27,8 @@ public class OrderPositionsService {
     private OrderPositionDAO orderPositionDAO;
 
     public List<ItemReplica> getItemReplicas(String accessToken, Integer orderId) {
+        //fixme check whether this order belongs to authenticated user
+
         List<OrderPosition> orderPositions = getOrderPositions(accessToken, orderId);
 
         return orderPositions
@@ -37,6 +39,8 @@ public class OrderPositionsService {
     }
 
     public List<VkItemReplica> getVkItemReplicas(String accessToken, Integer orderId) {
+        //fixme check whether this order belongs to authenticated user
+
         List<OrderPosition> orderPositions = getOrderPositions(accessToken, orderId);
 
         return orderPositions
@@ -47,11 +51,13 @@ public class OrderPositionsService {
     }
 
     public ItemReplica getItemReplica(String accessToken, Integer orderId, Integer itemId) {
+        //fixme check whether this order belongs to authenticated user
         return ItemReplica
             .buildFromEntity((com.ruber.dao.entity.ItemReplica) getOrderPosition(accessToken, orderId, itemId));
     }
 
     public VkItemReplica getVkItemReplica(String accessToken, Integer orderId, Integer itemId) {
+        //fixme check whether this order belongs to authenticated user
         return VkItemReplica
             .buildFromEntity((com.ruber.dao.entity.VkItemReplica) getOrderPosition(accessToken, orderId, itemId));
     }
@@ -83,7 +89,7 @@ public class OrderPositionsService {
         if (orderPositions.size() == 0)
             throw new RuntimeException(String.format("OrderPosition with id = %d for this order does not exist", positionId));
 
-        orderPositionDAO.deleteOrderPosition(positionId);
+        orderPositionDAO.deleteById(positionId);
     }
 
     public Integer addItemReplica(String accessToken, Integer orderId, ItemReplica itemReplica) {

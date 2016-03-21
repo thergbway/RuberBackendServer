@@ -14,6 +14,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity
 @Table(name = "pinned_messages")
+@NamedQuery(name = "PinnedMessage.deleteById", query = "delete from PinnedMessage m where m.id = :pinnedMessageId")
 public class PinnedMessage {
     @Id
     @GeneratedValue(strategy = SEQUENCE)

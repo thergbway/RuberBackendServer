@@ -14,7 +14,7 @@ public class OrderPositionDAOImpl implements OrderPositionDAO {
     private EntityManager entityManager;
 
     @Override
-    public void deleteOrderPosition(Integer positionId) {
+    public void deleteById(Integer positionId) {
         entityManager
             .createNamedQuery("OrderPosition.deleteById")
             .setParameter("positionId", positionId)
