@@ -1,6 +1,6 @@
 package com.ruber.controller;
 
-import com.ruber.controller.dto.PinnedMessage;
+import com.ruber.controller.dto.PinnedText;
 import com.ruber.service.PinnedItemsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -16,43 +16,43 @@ import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
-@RequestMapping(PinnedMessagesController.PATH)
-public class PinnedMessagesController {
-    public static final String PATH = "/orders/{orderId}/pinned_messages";
+@RequestMapping(PinnedTextsController.PATH)
+public class PinnedTextsController {
+    public static final String PATH = "/orders/{orderId}/pinned_texts";
 
     @Autowired
     private PinnedItemsService pinnedItemsService;
 
     @RequestMapping
-    public List<PinnedMessage> getPinnedMessages(
+    public List<PinnedText> getPinnedTexts(
         @RequestParam("access_token") String accessToken,
         @PathVariable("orderId") Integer orderId
     ) {
-        return pinnedItemsService.getPinnedMessages(accessToken, orderId);
+        return pinnedItemsService.getPinnedTexts(accessToken, orderId);
     }
 
-    @RequestMapping("/{messageId}")
-    public PinnedMessage getPinnedMessage(
+    @RequestMapping("/{textId}")
+    public PinnedText getPinnedText(
         @RequestParam("access_token") String accessToken,
         @PathVariable("orderId") Integer orderId,
-        @PathVariable("messageId") Integer messageId
+        @PathVariable("textId") Integer textId
     ) {
-        return pinnedItemsService.getPinnedMessage(accessToken, orderId, messageId);
+        return pinnedItemsService.getPinnedText(accessToken, orderId, textId);
     }
 
     @RequestMapping(method = POST)
-    public ResponseEntity<Void> createPinnedMessage(
+    public ResponseEntity<Void> createPinnedText(
         @RequestParam("access_token") String accessToken,
         @PathVariable("orderId") Integer orderId,
-        @RequestBody PinnedMessage pinnedMessageInfo,
+        @RequestBody PinnedText pinnedTextInfo,
 
         UriComponentsBuilder builder
     ) {
-        Integer messageId = pinnedItemsService.addPinnedMessage(accessToken, orderId, pinnedMessageInfo);
+        Integer textId = pinnedItemsService.addPinnedText(accessToken, orderId, pinnedTextInfo);
 
         UriComponents uriComponents = builder
-            .path(PATH + "/{messageId}")
-            .buildAndExpand(orderId, messageId);
+            .path(PATH + "/{textId}")
+            .buildAndExpand(orderId, textId);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(uriComponents.toUri());
@@ -60,13 +60,13 @@ public class PinnedMessagesController {
         return new ResponseEntity<>(headers, HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/{messageId}", method = DELETE)
+    @RequestMapping(value = "/{textId}", method = DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deletePinnedMessage(
+    public void deletePinnedText(
         @RequestParam("access_token") String accessToken,
         @PathVariable("orderId") Integer orderId,
-        @PathVariable("messageId") Integer messageId
+        @PathVariable("textId") Integer textId
     ) {
-        pinnedItemsService.deletePinnedItem(accessToken, orderId, messageId);
+        pinnedItemsService.deletePinnedItem(accessToken, orderId, textId);
     }
 }

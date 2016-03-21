@@ -14,14 +14,18 @@ import javax.persistence.Table;
 @NoArgsConstructor
 
 @Entity
-@Table(name = "pinned_texts")
+@Table(name = "pinned_files")
 @PrimaryKeyJoinColumn(name = "pinned_item_id")
-public class PinnedText extends PinnedItem {
+public class PinnedFile extends PinnedItem {
     @Column(nullable = false)
-    private String text;
+    private byte[] content;
 
-    public PinnedText(Integer id, Integer position, String text) {
+    @Column(name = "file_name", nullable = false)
+    private String fileName;
+
+    public PinnedFile(Integer id, Integer position, byte[] content, String fileName) {
         super(id, position);
-        this.text = text;
+        this.content = content;
+        this.fileName = fileName;
     }
 }

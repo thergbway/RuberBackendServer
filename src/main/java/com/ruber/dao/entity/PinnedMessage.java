@@ -1,25 +1,27 @@
 package com.ruber.dao.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-
-import static javax.persistence.GenerationType.SEQUENCE;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-@AllArgsConstructor
 
 @Entity
 @Table(name = "pinned_messages")
-@NamedQuery(name = "PinnedMessage.deleteById", query = "delete from PinnedMessage m where m.id = :pinnedMessageId")
-public class PinnedMessage {
-    @Id
-    @GeneratedValue(strategy = SEQUENCE)
-    private Integer id;
-
+@PrimaryKeyJoinColumn(name = "pinned_item_id")
+public class PinnedMessage extends PinnedItem {
     @Column(name = "vk_message_id", nullable = false)
     private Long vkMessageId;
+
+    public PinnedMessage(Integer id, Integer position, Long vkMessageId) {
+        super(id, position);
+        this.vkMessageId = vkMessageId;
+    }
 }

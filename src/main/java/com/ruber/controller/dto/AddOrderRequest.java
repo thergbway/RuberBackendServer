@@ -1,6 +1,8 @@
 package com.ruber.controller.dto;
 
-import com.ruber.dao.entity.*;
+import com.ruber.dao.entity.Order;
+import com.ruber.dao.entity.OrderPosition;
+import com.ruber.dao.entity.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -47,9 +49,7 @@ public class AddOrderRequest {
             shipment != null ? shipment.toEntity() : null,
             orderPositions,
             customer.toEntity(),
-            Collections.<PinnedMessage>emptyList(),
-            Collections.<PinnedText>emptyList(),
-            Collections.<File>emptyList()
+            Collections.<com.ruber.dao.entity.PinnedItem>emptyList()
         );
     }
 

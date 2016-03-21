@@ -10,8 +10,6 @@ import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
 
 import static com.ruber.dao.entity.OrderStatus.PAID;
 import static com.ruber.dao.entity.OrderStatus.WAITING;
@@ -28,31 +26,23 @@ public class FillDatabaseService {
     )
     public void fill() {
         try {
-            File f1 = new File(null, new byte[]{4, 4, 4}, "fileWith4.png");
-            File f2 = new File(null, new byte[]{5, 5, 5}, "fileWith5.png");
-            File f3 = new File(null, new byte[]{6, 6, 6}, "fileWith6.png");
-
-            entityManager.persist(f1);
-            entityManager.persist(f2);
-            entityManager.persist(f3);
-
             ExternalAppCredential cr1 = new ExternalAppCredential(null, 100, "100", "iPhone application");
             ExternalAppCredential cr2 = new ExternalAppCredential(null, 200, "200", "Android application");
 
             entityManager.persist(cr1);
             entityManager.persist(cr2);
 
-            File f4 = new File(null, new byte[]{7, 7, 7}, "fileWith7.png");
-            File f5 = new File(null, new byte[]{8, 8, 8}, "fileWith8.png");
-            File f6 = new File(null, new byte[]{9, 9, 9}, "fileWith9.png");
+            PinnedFile f4 = new PinnedFile(null, 1, new byte[]{7, 7, 7}, "fileWith7.png");
+            PinnedFile f5 = new PinnedFile(null, 2, new byte[]{8, 8, 8}, "fileWith8.png");
+            PinnedFile f6 = new PinnedFile(null, 3, new byte[]{9, 9, 9}, "fileWith9.png");
 
-            PinnedText t1 = new PinnedText(null, "text1");
-            PinnedText t2 = new PinnedText(null, "text2");
-            PinnedText t3 = new PinnedText(null, "text3");
+            PinnedText t1 = new PinnedText(null, 4, "text1");
+            PinnedText t2 = new PinnedText(null, 5, "text2");
+            PinnedText t3 = new PinnedText(null, 6, "text3");
 
-            PinnedMessage m1 = new PinnedMessage(null, 777L);
-            PinnedMessage m2 = new PinnedMessage(null, 888L);
-            PinnedMessage m3 = new PinnedMessage(null, 999L);
+            PinnedMessage m1 = new PinnedMessage(null, 7, 777L);
+            PinnedMessage m2 = new PinnedMessage(null, 8, 888L);
+            PinnedMessage m3 = new PinnedMessage(null, 9, 999L);
 
             Customer c1 = new Customer(null, "Nika She", "+79214454546", 100200);
             Customer c2 = new Customer(null, "Iva Lee", "+79528951011", 300400);
@@ -75,8 +65,8 @@ public class FillDatabaseService {
             VkItemReplica vir2 = new VkItemReplica(null, "vkItem2", "vkItem2 desc", new URL("http://google.com/pic5.gif"), new BigDecimal("700.00"), 3, 77889900, 77778888);
             VkItemReplica vir3 = new VkItemReplica(null, "vkItem3", "vkItem3 desc", new URL("http://google.com/pic6.gif"), new BigDecimal("25.05"), 4, 77889900, 22223333);
 
-            Order o1 = new Order(null, "order1", "order1 desc", WAITING, 67890L, 10067890L, d1, sh1, Arrays.asList(ir1, vir1, vir2), c1, Arrays.asList(m1, m2, m3), Arrays.asList(t1, t2), Arrays.asList(f4, f5));
-            Order o2 = new Order(null, "order2", "", PAID, 67890L, null, null, null, Arrays.asList(ir2, vir3), c1, new LinkedList<>(), Collections.singletonList(t3), Collections.singletonList(f6));
+            Order o1 = new Order(null, "order1", "order1 desc", WAITING, 67890L, 10067890L, d1, sh1, Arrays.asList(ir1, vir1, vir2), c1, Arrays.asList(m1, m2, m3, t1, t2, f4, f5));
+            Order o2 = new Order(null, "order2", "", PAID, 67890L, null, null, null, Arrays.asList(ir2, vir3), c1, Arrays.asList(t3, f6));
 
             User user = new User(null, 12345000, Arrays.asList(r1, r2), Arrays.asList(v1, v2, v3), Arrays.asList(o1, o2));
 

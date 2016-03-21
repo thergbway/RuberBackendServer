@@ -13,15 +13,14 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @AllArgsConstructor
 
 @Entity
-@Table(name = "files")
-public class File {
+@Table(name = "pinned_items")
+@Inheritance(strategy = InheritanceType.JOINED)
+@NamedQuery(name = "PinnedItem.deleteById", query = "delete from PinnedItem i where i.id = :pinnedItemId")
+public abstract class PinnedItem {
     @Id
     @GeneratedValue(strategy = SEQUENCE)
     private Integer id;
 
     @Column(nullable = false)
-    private byte[] content;
-
-    @Column(name = "file_name", nullable = false)
-    private String fileName;
+    private Integer position;
 }

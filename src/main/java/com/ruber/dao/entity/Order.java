@@ -54,17 +54,5 @@ public class Order {
 
     @OneToMany(cascade = ALL)
     @JoinColumn(name = "order_id", nullable = false)
-    private List<PinnedMessage> pinnedMessages;
-
-    @OneToMany(cascade = ALL)
-    @JoinColumn(name = "order_id", nullable = false)
-    private List<PinnedText> pinnedTexts;
-
-    @OneToMany(cascade = ALL)
-    @JoinTable(
-        name = "pinned_files",
-        joinColumns = @JoinColumn(name = "order_id", nullable = false),
-        inverseJoinColumns = @JoinColumn(name = "file_id", nullable = false)
-    )
-    private List<File> pinnedFiles;
+    private List<PinnedItem> pinnedItems;
 }
