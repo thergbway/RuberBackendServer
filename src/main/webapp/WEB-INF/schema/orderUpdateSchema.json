@@ -86,7 +86,8 @@
         "vk_id": {
           "id": "http://ruber.com/json-schema-for-order-update/customer/vk_id",
           "type": [
-            "integer"
+            "integer",
+            "null"
           ]
         }
       }

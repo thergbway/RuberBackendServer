@@ -11,6 +11,7 @@ public class OrderPreview {
     private String description;
     private OrderStatus status;
     private Integer order_positions;
+    private Integer pinned_items;
 
     private OrderPreview() {
     }
@@ -22,6 +23,7 @@ public class OrderPreview {
         orderPreview.setTitle(entity.getTitle());
         orderPreview.setDescription(entity.getDescription());
         orderPreview.setStatus(entity.getStatus());
+        orderPreview.setPinned_items(entity.getPinnedItems().size());
 
         orderPreview.setOrder_positions(entity.getOrderPositions().size());
 
