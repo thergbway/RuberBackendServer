@@ -16,7 +16,7 @@
     <mvc:annotation-driven/>
 
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"
-          p:prefix="WEB-INF/views/"
+          p:prefix="WEB-INF/view/"
           p:suffix=".jsp"
           p:viewClass="org.springframework.web.servlet.view.JstlView"/>
 

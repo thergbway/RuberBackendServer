@@ -1,0 +1,95 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://ruber.com/json-schema-for-order-update",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "title": {
+      "id": "http://ruber.com/json-schema-for-order-update/title",
+      "type": "string"
+    },
+    "description": {
+      "id": "http://ruber.com/json-schema-for-order-update/description",
+      "type": "string"
+    },
+    "status": {
+      "id": "http://ruber.com/json-schema-for-order-update/status",
+      "type": "string",
+      "enum": []
+    },
+    "deadline_timestamp": {
+      "id": "http://ruber.com/json-schema-for-order-update/deadline_timestamp",
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "discount": {
+      "id": "http://ruber.com/json-schema-for-order-update/discount",
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "id": "http://ruber.com/json-schema-for-order-update/discount/title",
+          "type": "string"
+        },
+        "description": {
+          "id": "http://ruber.com/json-schema-for-order-update/discount/description",
+          "type": "string"
+        },
+        "thumb_photo": {
+          "id": "http://ruber.com/json-schema-for-order-update/discount/thumb_photo",
+          "type": "string"
+        },
+        "cost": {
+          "id": "http://ruber.com/json-schema-for-order-update/discount/cost",
+          "type": "number"
+        }
+      }
+    },
+    "shipment": {
+      "id": "http://ruber.com/json-schema-for-order-update/shipment",
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "address": {
+          "id": "http://ruber.com/json-schema-for-order-update/shipment/address",
+          "type": "string"
+        },
+        "cost": {
+          "id": "http://ruber.com/json-schema-for-order-update/shipment/cost",
+          "type": "number"
+        }
+      }
+    },
+    "customer": {
+      "id": "http://ruber.com/json-schema-for-order-update/customer",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "id": "http://ruber.com/json-schema-for-order-update/customer/name",
+          "type": "string"
+        },
+        "phone": {
+          "id": "http://ruber.com/json-schema-for-order-update/customer/phone",
+          "type": [
+            "string"
+          ]
+        },
+        "vk_id": {
+          "id": "http://ruber.com/json-schema-for-order-update/customer/vk_id",
+          "type": [
+            "integer"
+          ]
+        }
+      }
+    }
+  }
+}
