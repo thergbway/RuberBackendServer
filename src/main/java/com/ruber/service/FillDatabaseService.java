@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Collections;
 
 import static com.ruber.dao.entity.OrderStatus.PAID;
 import static com.ruber.dao.entity.OrderStatus.WAITING;
@@ -69,7 +70,7 @@ public class FillDatabaseService {
             Order o1 = new Order(null, "order1", "order1 desc", WAITING, 67890L, 10067890L, d1, sh1, Arrays.asList(ir1, vir1, vir2), c1, Arrays.asList(m1, m2, m3, t1, t2, f4, f5));
             Order o2 = new Order(null, "order2", "", PAID, 67890L, null, null, null, Arrays.asList(ir2, vir3), c1, Arrays.asList(t3, f6));
 
-            User user = new User(null, 12345000, Arrays.asList(50, 51, 52, 53, 54, 55, 56, 57, 58, 59), Arrays.asList(r1, r2), Arrays.asList(v1, v2, v3), Arrays.asList(o1, o2));
+            User user = new User(null, 12345000, Collections.emptyList(), Arrays.asList(r1, r2), Arrays.asList(v1, v2, v3), Arrays.asList(o1, o2));
 
             entityManager.persist(user);
 

@@ -13,7 +13,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
 //@RequestMapping //todo add right roots later
-public class UserController {
+public class UsersController {
     @Autowired
     private UsersService usersService;
 
