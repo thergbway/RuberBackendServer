@@ -29,6 +29,12 @@ public class User {
     @Column(name = "vk_id", nullable = false, unique = true)
     private Integer vkId;
 
+    @ElementCollection
+    @CollectionTable(name = "connected_vk_groups")
+    @Column(name = "vk_group_id", nullable = false)
+    @JoinColumn(name = "user_id")
+    private List<Integer> connectedVkGroupIds;
+
     @OneToMany(cascade = ALL)
     @JoinColumn(name = "user_id", nullable = false)
     private List<RuberToken> ruberTokens;
