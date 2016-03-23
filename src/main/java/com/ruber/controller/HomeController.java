@@ -25,6 +25,6 @@ public class HomeController {
 
     @PostConstruct
     public void postConstruct() {
-        fillDatabaseService.fill();
+//        fillDatabaseService.fill();
     }
 }
