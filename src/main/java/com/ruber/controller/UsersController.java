@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Set;
 
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -18,7 +18,7 @@ public class UsersController {
     private UsersService usersService;
 
     @RequestMapping("/connected_groups")
-    public List<Integer> getConnectedVkGroupIds(
+    public Set<Integer> getConnectedVkGroupIds(
         @RequestParam("access_token") String accessToken) {
 
         return usersService.getConnectedVkGroupIds(accessToken);

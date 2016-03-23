@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.GenerationType.SEQUENCE;
@@ -33,7 +34,7 @@ public class User {
     @CollectionTable(name = "connected_vk_groups")
     @Column(name = "vk_group_id", nullable = false)
     @JoinColumn(name = "user_id")
-    private List<Integer> connectedVkGroupIds;
+    private Set<Integer> connectedVkGroupIds;
 
     @OneToMany(cascade = ALL)
     @JoinColumn(name = "user_id", nullable = false)

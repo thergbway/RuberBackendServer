@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 @Transactional//TODO
@@ -26,7 +26,7 @@ public class UsersService {
     }
 
     public void addUser(Integer vkId, String vkToken, String ruberToken) {
-        User user = new User(null, vkId, Collections.emptyList(), Collections.singletonList(new RuberToken(null, ruberToken)),
+        User user = new User(null, vkId, Collections.emptySet(), Collections.singletonList(new RuberToken(null, ruberToken)),
             Collections.singletonList(new VkToken(null, vkToken)), Collections.emptyList());
 
         userDAO.create(user);
@@ -42,14 +42,14 @@ public class UsersService {
         user.getRuberTokens().add(new RuberToken(null, ruberToken));
     }
 
-    public List<Integer> getConnectedVkGroupIds(String accessToken) {
+    public Set<Integer> getConnectedVkGroupIds(String accessToken) {
         if (!ruberTokensService.isValidToken(accessToken)) {
             throw new RuntimeException("Invalid access token");
         }
 
         User user = userDAO.getByRuberToken(accessToken);
 
-        return new LinkedList<>(user.getConnectedVkGroupIds());//fixme why should we copy all elements(tip: lazy init and transactions)?
+        return new HashSet<>(user.getConnectedVkGroupIds());//fixme why should we copy all elements(tip: lazy init and transactions)?
     }
 
     public void addConnectedVkGroupId(String accessToken, Integer vkGroupId) {
