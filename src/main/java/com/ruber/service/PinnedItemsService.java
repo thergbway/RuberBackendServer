@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.ruber.util.TimeUtils.getCurrentTimestamp;
+
 @Service
 @Transactional
 public class PinnedItemsService {
@@ -135,16 +137,17 @@ public class PinnedItemsService {
     }
 
     public Integer addPinnedMessage(String accessToken, Integer orderId, PinnedMessage pinnedMessageInfo) {
-        return addPinnedItem(accessToken, orderId, pinnedMessageInfo.toEntity());
+        return addPinnedItem(accessToken, orderId, pinnedMessageInfo.toEntity(getCurrentTimestamp()));
     }
 
     public Integer addPinnedText(String accessToken, Integer orderId, PinnedText pinnedTextInfo) {
-        return addPinnedItem(accessToken, orderId, pinnedTextInfo.toEntity());
+        return addPinnedItem(accessToken, orderId, pinnedTextInfo.toEntity(getCurrentTimestamp()));
     }
 
-    public Integer addPinnedFile(String accessToken, Integer orderId, AddPinnedFileRequestPart fileInfo, byte[] content, String fileName) {
+    public Integer addPinnedFile(String accessToken, Integer orderId, AddPinnedFileRequestPart fileInfo,
+                                 byte[] content, String fileName) {
         com.ruber.dao.entity.PinnedFile pinnedFile =
-            new com.ruber.dao.entity.PinnedFile(null, fileInfo.getPosition(), content, fileName);
+            new com.ruber.dao.entity.PinnedFile(null, fileInfo.getPosition(), getCurrentTimestamp(), content, fileName);
         return addPinnedItem(accessToken, orderId, pinnedFile);
     }
 

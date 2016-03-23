@@ -20,8 +20,8 @@ public class PinnedMessage extends PinnedItem {
     @Column(name = "vk_message_id", nullable = false)
     private Long vkMessageId;
 
-    public PinnedMessage(Integer id, Integer position, Long vkMessageId) {
-        super(id, position);
+    public PinnedMessage(Integer id, Integer position, Long createdTimestamp, Long vkMessageId) {
+        super(id, position, createdTimestamp);
         this.vkMessageId = vkMessageId;
     }
 }

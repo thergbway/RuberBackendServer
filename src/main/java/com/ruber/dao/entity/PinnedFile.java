@@ -23,8 +23,8 @@ public class PinnedFile extends PinnedItem {
     @Column(name = "file_name", nullable = false)
     private String fileName;
 
-    public PinnedFile(Integer id, Integer position, byte[] content, String fileName) {
-        super(id, position);
+    public PinnedFile(Integer id, Integer position, Long createdTimestamp, byte[] content, String fileName) {
+        super(id, position, createdTimestamp);
         this.content = content;
         this.fileName = fileName;
     }

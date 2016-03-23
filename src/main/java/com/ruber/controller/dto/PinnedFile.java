@@ -7,6 +7,7 @@ public class PinnedFile {
     private Integer id;
     private Integer position;
     private String file_name;
+    private Long created_timestamp;
 
     private PinnedFile() {
     }
@@ -17,6 +18,7 @@ public class PinnedFile {
         pinnedFile.setId(entity.getId());
         pinnedFile.setPosition(entity.getPosition());
         pinnedFile.setFile_name(entity.getFileName());
+        pinnedFile.setCreated_timestamp(entity.getCreatedTimestamp());
 
         return pinnedFile;
     }

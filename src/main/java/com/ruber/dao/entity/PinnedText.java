@@ -20,8 +20,8 @@ public class PinnedText extends PinnedItem {
     @Column(nullable = false)
     private String text;
 
-    public PinnedText(Integer id, Integer position, String text) {
-        super(id, position);
+    public PinnedText(Integer id, Integer position, Long createdTimestamp, String text) {
+        super(id, position, createdTimestamp);
         this.text = text;
     }
 }

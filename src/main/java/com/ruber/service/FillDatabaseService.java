@@ -13,6 +13,7 @@ import java.util.Arrays;
 
 import static com.ruber.dao.entity.OrderStatus.PAID;
 import static com.ruber.dao.entity.OrderStatus.WAITING;
+import static com.ruber.util.TimeUtils.getCurrentTimestamp;
 import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 
 @Service
@@ -32,17 +33,17 @@ public class FillDatabaseService {
             entityManager.persist(cr1);
             entityManager.persist(cr2);
 
-            PinnedFile f4 = new PinnedFile(null, 1, new byte[]{7, 7, 7}, "fileWith7.png");
-            PinnedFile f5 = new PinnedFile(null, 2, new byte[]{8, 8, 8}, "fileWith8.png");
-            PinnedFile f6 = new PinnedFile(null, 3, new byte[]{9, 9, 9}, "fileWith9.png");
+            PinnedFile f4 = new PinnedFile(null, 1, getCurrentTimestamp(), new byte[]{7, 7, 7}, "fileWith7.png");
+            PinnedFile f5 = new PinnedFile(null, 2, getCurrentTimestamp(), new byte[]{8, 8, 8}, "fileWith8.png");
+            PinnedFile f6 = new PinnedFile(null, 3, getCurrentTimestamp(), new byte[]{9, 9, 9}, "fileWith9.png");
 
-            PinnedText t1 = new PinnedText(null, 4, "text1");
-            PinnedText t2 = new PinnedText(null, 5, "text2");
-            PinnedText t3 = new PinnedText(null, 6, "text3");
+            PinnedText t1 = new PinnedText(null, 4, getCurrentTimestamp(), "text1");
+            PinnedText t2 = new PinnedText(null, 5, getCurrentTimestamp(), "text2");
+            PinnedText t3 = new PinnedText(null, 6, getCurrentTimestamp(), "text3");
 
-            PinnedMessage m1 = new PinnedMessage(null, 7, 777L);
-            PinnedMessage m2 = new PinnedMessage(null, 8, 888L);
-            PinnedMessage m3 = new PinnedMessage(null, 9, 999L);
+            PinnedMessage m1 = new PinnedMessage(null, 7, getCurrentTimestamp(), 777L);
+            PinnedMessage m2 = new PinnedMessage(null, 8, getCurrentTimestamp(), 888L);
+            PinnedMessage m3 = new PinnedMessage(null, 9, getCurrentTimestamp(), 999L);
 
             Customer c1 = new Customer(null, "Nika She", "+79214454546", 100200);
             Customer c2 = new Customer(null, "Iva Lee", "+79528951011", 300400);

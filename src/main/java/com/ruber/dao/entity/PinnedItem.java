@@ -23,4 +23,7 @@ public abstract class PinnedItem {
 
     @Column(nullable = false)
     private Integer position;
+
+    @Column(name = "created_timestamp", nullable = false)
+    private Long createdTimestamp;
 }
