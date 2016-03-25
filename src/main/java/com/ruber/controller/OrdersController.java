@@ -1,6 +1,8 @@
 package com.ruber.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.github.fge.jackson.JsonLoader;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
@@ -10,6 +12,7 @@ import com.ruber.controller.dto.AddOrderRequest;
 import com.ruber.controller.dto.GetOrderResponse;
 import com.ruber.controller.dto.OrderPreview;
 import com.ruber.dao.entity.OrderStatus;
+import com.ruber.exception.InvalidRequestJsonException;
 import com.ruber.service.OrdersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,6 +40,8 @@ public class OrdersController {
 
     private JsonSchema orderUpdateSchema;
 
+    private JsonNode orderUpdateSchemaAsJsonNode;
+
     @PostConstruct
     private void postConstruct() throws Exception {
         JsonNode jsonNode = JsonLoader.fromFile(orderUpdateSchemaFile.getFile());
@@ -46,7 +51,8 @@ public class OrdersController {
             statusEnums.add(orderStatus.toString());
         }
 
-        orderUpdateSchema = JsonSchemaFactory.byDefault().getJsonSchema(jsonNode);
+        orderUpdateSchemaAsJsonNode = jsonNode;
+        orderUpdateSchema = JsonSchemaFactory.byDefault().getJsonSchema(orderUpdateSchemaAsJsonNode);
     }
 
     @Autowired
@@ -101,11 +107,11 @@ public class OrdersController {
     private void validateUpdateOrderJsonNode(JsonNode node) {
         try {
             if (!orderUpdateSchema.validate(node).isSuccess()) {
-                throw new RuntimeException("Invalid Json");
+                throw new InvalidRequestJsonException("valid schema: "
+                    + new ObjectMapper().writeValueAsString(orderUpdateSchemaAsJsonNode));
             }
-        } catch (ProcessingException e) {
+        } catch (ProcessingException | JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-
     }
 }

@@ -9,6 +9,9 @@ import com.ruber.dao.UserDAO;
 import com.ruber.dao.entity.Order;
 import com.ruber.dao.entity.PinnedItem;
 import com.ruber.dao.entity.User;
+import com.ruber.exception.InvalidAccessTokenException;
+import com.ruber.exception.NoSuchOrderException;
+import com.ruber.exception.NoSuchPinnedItemException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,7 +60,7 @@ public class PinnedItemsService {
 
     private List<PinnedItem> getPinnedItems(String accessToken, Integer orderId) {
         if (!ruberTokensService.isValidToken(accessToken)) {
-            throw new RuntimeException("Invalid access token");
+            throw new InvalidAccessTokenException();
         }
 
         User user = userDAO.getByRuberToken(accessToken);
@@ -69,7 +72,7 @@ public class PinnedItemsService {
             .collect(Collectors.toList());
 
         if (orders.size() == 0)
-            throw new RuntimeException(String.format("Order with id = %d for this user does not exist", orderId));
+            throw new NoSuchOrderException(orderId);
 
         Order order = orders.get(0);
 
@@ -94,7 +97,7 @@ public class PinnedItemsService {
 
     private PinnedItem getPinnedItem(String accessToken, Integer orderId, Integer itemId) {
         if (!ruberTokensService.isValidToken(accessToken)) {
-            throw new RuntimeException("Invalid access token");
+            throw new InvalidAccessTokenException();
         }
 
         User user = userDAO.getByRuberToken(accessToken);
@@ -106,7 +109,7 @@ public class PinnedItemsService {
             .collect(Collectors.toList());
 
         if (orders.size() == 0)
-            throw new RuntimeException(String.format("Order with id = %d for this user does not exist", orderId));
+            throw new NoSuchOrderException(orderId);
 
         Order order = orders.get(0);
 
@@ -119,7 +122,7 @@ public class PinnedItemsService {
         if (itemOptional.isPresent())
             return itemOptional.get();
         else
-            throw new RuntimeException("No such pinned item with id " + itemId);
+            throw new NoSuchPinnedItemException(itemId);
     }
 
     public byte[] getPinnedFileContent(String accessToken, Integer orderId, Integer fileId) {
@@ -153,7 +156,7 @@ public class PinnedItemsService {
 
     private Integer addPinnedItem(String accessToken, Integer orderId, PinnedItem pinnedItem) {
         if (!ruberTokensService.isValidToken(accessToken)) {
-            throw new RuntimeException("Invalid access token");
+            throw new InvalidAccessTokenException();
         }
 
         User user = userDAO.getByRuberToken(accessToken);
@@ -165,7 +168,7 @@ public class PinnedItemsService {
             .collect(Collectors.toList());
 
         if (orders.size() == 0)
-            throw new RuntimeException(String.format("Order with id = %d for this user does not exist", orderId));
+            throw new NoSuchOrderException(orderId);
 
         Order order = orders.get(0);
 
@@ -180,7 +183,7 @@ public class PinnedItemsService {
 
     public void deletePinnedItem(String accessToken, Integer orderId, Integer itemId) {
         if (!ruberTokensService.isValidToken(accessToken)) {
-            throw new RuntimeException("Invalid access token");
+            throw new InvalidAccessTokenException();
         }
 
         User user = userDAO.getByRuberToken(accessToken);
@@ -192,7 +195,7 @@ public class PinnedItemsService {
             .collect(Collectors.toList());
 
         if (orders.size() == 0)
-            throw new RuntimeException(String.format("Order with id = %d for this user does not exist", orderId));
+            throw new NoSuchOrderException(orderId);
 
         Order order = orders.get(0);
 
@@ -203,7 +206,7 @@ public class PinnedItemsService {
             .findFirst();
 
         if (!itemOptional.isPresent())
-            throw new RuntimeException("No such pinned item with id " + itemId);
+            throw new NoSuchPinnedItemException(itemId);
         else
             pinnedItemDAO.deleteById(itemOptional.get().getId());
     }

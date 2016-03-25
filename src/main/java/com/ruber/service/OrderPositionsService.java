@@ -7,6 +7,9 @@ import com.ruber.dao.UserDAO;
 import com.ruber.dao.entity.Order;
 import com.ruber.dao.entity.OrderPosition;
 import com.ruber.dao.entity.User;
+import com.ruber.exception.InvalidAccessTokenException;
+import com.ruber.exception.NoSuchOrderException;
+import com.ruber.exception.NoSuchOrderPositionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,7 +67,7 @@ public class OrderPositionsService {
 
     public void deleteOrderPosition(String accessToken, Integer orderId, Integer positionId) {
         if (!ruberTokensService.isValidToken(accessToken)) {
-            throw new RuntimeException("Invalid access token");
+            throw new InvalidAccessTokenException();
         }
 
         User user = userDAO.getByRuberToken(accessToken);
@@ -76,7 +79,7 @@ public class OrderPositionsService {
             .collect(Collectors.toList());
 
         if (orders.size() == 0)
-            throw new RuntimeException(String.format("Order with id = %d for this user does not exist", orderId));
+            throw new NoSuchOrderException(orderId);
 
         Order order = orders.get(0);
 
@@ -87,7 +90,7 @@ public class OrderPositionsService {
             .collect(Collectors.toList());
 
         if (orderPositions.size() == 0)
-            throw new RuntimeException(String.format("OrderPosition with id = %d for this order does not exist", positionId));
+            throw new NoSuchOrderPositionException(positionId);
 
         orderPositionDAO.deleteById(positionId);
     }
@@ -102,7 +105,7 @@ public class OrderPositionsService {
 
     private Integer addOrderPosition(String accessToken, Integer orderId, OrderPosition position) {
         if (!ruberTokensService.isValidToken(accessToken)) {
-            throw new RuntimeException("Invalid access token");
+            throw new InvalidAccessTokenException();
         }
 
         User user = userDAO.getByRuberToken(accessToken);
@@ -114,7 +117,7 @@ public class OrderPositionsService {
             .collect(Collectors.toList());
 
         if (orders.size() == 0)
-            throw new RuntimeException(String.format("Order with id = %d for this user does not exist", orderId));
+            throw new NoSuchOrderException(orderId);
 
         Order order = orders.get(0);
 
@@ -127,7 +130,7 @@ public class OrderPositionsService {
 
     private OrderPosition getOrderPosition(String accessToken, Integer orderId, Integer positionId) {
         if (!ruberTokensService.isValidToken(accessToken)) {
-            throw new RuntimeException("Invalid access token");
+            throw new InvalidAccessTokenException();
         }
 
         User user = userDAO.getByRuberToken(accessToken);
@@ -139,7 +142,7 @@ public class OrderPositionsService {
             .collect(Collectors.toList());
 
         if (orders.size() == 0)
-            throw new RuntimeException(String.format("Order with id = %d for this user does not exist", orderId));
+            throw new NoSuchOrderException(orderId);
 
         Order order = orders.get(0);
 
@@ -150,14 +153,14 @@ public class OrderPositionsService {
             .collect(Collectors.toList());
 
         if (orderPositions.size() != 1)
-            throw new RuntimeException("No such OrderPosition with id = " + positionId);
+            throw new NoSuchOrderPositionException(positionId);
 
         return orderPositions.get(0);
     }
 
     private List<OrderPosition> getOrderPositions(String accessToken, Integer orderId) {
         if (!ruberTokensService.isValidToken(accessToken)) {
-            throw new RuntimeException("Invalid access token");
+            throw new InvalidAccessTokenException();
         }
 
         User user = userDAO.getByRuberToken(accessToken);
@@ -169,7 +172,7 @@ public class OrderPositionsService {
             .collect(Collectors.toList());
 
         if (orders.size() == 0)
-            throw new RuntimeException(String.format("Order with id = %d for this user does not exist", orderId));
+            throw new NoSuchOrderException(orderId);
 
         Order order = orders.get(0);
 

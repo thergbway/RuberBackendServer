@@ -1,6 +1,7 @@
 package com.ruber.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.ruber.exception.InvalidRequestJsonException;
 import com.ruber.service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,7 +32,7 @@ public class UsersController {
         @RequestBody JsonNode requestBody
     ) {
         if (!requestBody.has("vk_group_id") || requestBody.get("vk_group_id").isNull())
-            throw new RuntimeException("invalid json");
+            throw new InvalidRequestJsonException("vk_group_id is missed or equals null");
         else
             usersService.addConnectedVkGroupId(accessToken, requestBody.get("vk_group_id").asInt());
     }

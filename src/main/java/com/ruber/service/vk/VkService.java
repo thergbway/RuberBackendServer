@@ -6,6 +6,7 @@ import com.ruber.service.vk.dto.LoadMarketPictureResponse;
 import com.ruber.service.vk.dto.SaveMarketPhotoResponse;
 import org.springframework.stereotype.Service;
 
+//todo remove entire vk package
 @Service
 public class VkService {
 //    public GetGroupsResponse getGroups(Integer count, Integer offset, String vkAccessToken) throws VkException {

@@ -35,8 +35,6 @@ public class GetOrderResponse {
                 vkItemReplicas.add(VkItemReplica.buildFromEntity((com.ruber.dao.entity.VkItemReplica) position));
             else if (position instanceof com.ruber.dao.entity.ItemReplica)
                 itemReplicas.add(ItemReplica.buildFromEntity((com.ruber.dao.entity.ItemReplica) position));
-            else
-                throw new RuntimeException("Invalid instance type for casting: " + position.getClass());
         });
 
         GetOrderResponse response = new GetOrderResponse();

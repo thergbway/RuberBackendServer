@@ -2,6 +2,7 @@ package com.ruber.service;
 
 import com.ruber.controller.dto.AuthRequest;
 import com.ruber.controller.dto.AuthResponse;
+import com.ruber.exception.InvalidExternalAppCredentialsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -26,7 +27,7 @@ public class AuthService {
     )
     public AuthResponse authenticate(AuthRequest req) {
         if (!externalAppCredentialsService.checkCredentials(req.getRuber_app_id(), req.getRuber_app_secret()))
-            throw new RuntimeException("Invalid external application credentials");
+            throw new InvalidExternalAppCredentialsException();
 
         String ruberToken = ruberTokensService.getNextToken();
 

@@ -8,6 +8,10 @@ import com.ruber.controller.dto.OrderPreview;
 import com.ruber.dao.OrderDAO;
 import com.ruber.dao.UserDAO;
 import com.ruber.dao.entity.*;
+import com.ruber.exception.InvalidAccessTokenException;
+import com.ruber.exception.InvalidURLException;
+import com.ruber.exception.NoSuchOrderException;
+import com.ruber.exception.NotEnoughArgumentsException;
 import com.ruber.util.TimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +22,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.util.Arrays.asList;
 
 @Service
 @Transactional//TODO
@@ -33,7 +39,7 @@ public class OrdersService {
 
     public Integer addOrder(String accessToken, AddOrderRequest addOrderRequest) {
         if (!ruberTokensService.isValidToken(accessToken)) {
-            throw new RuntimeException("Invalid access token");
+            throw new InvalidAccessTokenException();
         }
 
         User user = userDAO.getByRuberToken(accessToken);
@@ -53,7 +59,7 @@ public class OrdersService {
 
     public GetOrderResponse getOrder(String accessToken, Integer orderId) {
         if (!ruberTokensService.isValidToken(accessToken)) {
-            throw new RuntimeException("Invalid access token");
+            throw new InvalidAccessTokenException();
         }
 
         //TODO it is better to create a named query that gets order by Id for the specified user
@@ -66,7 +72,7 @@ public class OrdersService {
             .collect(Collectors.toList());
 
         if (orders.size() == 0)
-            throw new RuntimeException(String.format("Order with id = %d for this user does not exist", orderId));
+            throw new NoSuchOrderException(orderId);
 
         Order order = orders.get(0);
 
@@ -75,7 +81,7 @@ public class OrdersService {
 
     public List<OrderPreview> getOrdersPreview(String accessToken) {
         if (!ruberTokensService.isValidToken(accessToken)) {
-            throw new RuntimeException("Invalid access token");
+            throw new InvalidAccessTokenException();
         }
 
         User user = userDAO.getByRuberToken(accessToken);
@@ -89,7 +95,7 @@ public class OrdersService {
 
     public void updateOrder(String accessToken, Integer orderId, JsonNode updateInfo) {//fixme refactor: create several methods
         if (!ruberTokensService.isValidToken(accessToken)) {
-            throw new RuntimeException("Invalid access token");
+            throw new InvalidAccessTokenException();
         }
 
         //TODO it is better to create a named query that gets order by Id for the specified user
@@ -102,7 +108,7 @@ public class OrdersService {
             .collect(Collectors.toList());
 
         if (orders.size() == 0)
-            throw new RuntimeException(String.format("Order with id = %d for this user does not exist", orderId));
+            throw new NoSuchOrderException(orderId);
 
         Order order = orders.get(0);
 
@@ -160,7 +166,9 @@ public class OrdersService {
                             discountDescription == null ||
                             discountThumbPhoto == null ||
                             discountCost == null)
-                            throw new RuntimeException("Not enough arguments were specified for new Discount");
+                            throw new NotEnoughArgumentsException(asList(
+                                "discount title", "discount description", "discount thumb photo", "discount cost"
+                            ));
 
                         discount = new Discount(
                             null,
@@ -172,7 +180,7 @@ public class OrdersService {
                         order.setDiscount(discount);
                     }
                 } catch (MalformedURLException e) {
-                    throw new RuntimeException(e);
+                    throw new InvalidURLException(discountThumbPhoto);
                 }
             }
         }
@@ -196,7 +204,7 @@ public class OrdersService {
                         shipment.setCost(shipmentCost);
                 } else {
                     if (shipmentAddress == null || shipmentCost == null)
-                        throw new RuntimeException("Not enough arguments were specified for new Shipment");
+                        throw new NotEnoughArgumentsException(asList("shipment address", "shipment cost"));
 
                     shipment = new Shipment(null, shipmentAddress, shipmentCost);
 

@@ -1,9 +1,11 @@
 package com.ruber.service;
 
 import com.ruber.dao.UserDAO;
+import com.ruber.dao.VkTokenDAO;
 import com.ruber.dao.entity.RuberToken;
 import com.ruber.dao.entity.User;
 import com.ruber.dao.entity.VkToken;
+import com.ruber.exception.InvalidAccessTokenException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,9 @@ import java.util.Set;
 public class UsersService {
     @Autowired
     private UserDAO userDAO;
+
+    @Autowired
+    private VkTokenDAO vkTokenDAO;
 
     @Autowired
     private RuberTokensService ruberTokensService;
@@ -34,7 +39,8 @@ public class UsersService {
 
     public void addVkTokenToUser(Integer vkId, String vkToken) {
         User user = userDAO.getByVkId(vkId);
-        user.getVkTokens().add(new VkToken(null, vkToken));
+        if (vkTokenDAO.getByValue(vkToken) == null)
+            user.getVkTokens().add(new VkToken(null, vkToken));
     }
 
     public void addRuberTokenToUser(Integer vkId, String ruberToken) {
@@ -44,7 +50,7 @@ public class UsersService {
 
     public Set<Integer> getConnectedVkGroupIds(String accessToken) {
         if (!ruberTokensService.isValidToken(accessToken)) {
-            throw new RuntimeException("Invalid access token");
+            throw new InvalidAccessTokenException();
         }
 
         User user = userDAO.getByRuberToken(accessToken);
@@ -54,7 +60,7 @@ public class UsersService {
 
     public void addConnectedVkGroupId(String accessToken, Integer vkGroupId) {
         if (!ruberTokensService.isValidToken(accessToken)) {
-            throw new RuntimeException("Invalid access token");
+            throw new InvalidAccessTokenException();
         }
 
         User user = userDAO.getByRuberToken(accessToken);
@@ -64,7 +70,7 @@ public class UsersService {
 
     public void deleteConnectedVkGroupId(String accessToken, Integer vkGroupId) {
         if (!ruberTokensService.isValidToken(accessToken)) {
-            throw new RuntimeException("Invalid access token");
+            throw new InvalidAccessTokenException();
         }
 
         User user = userDAO.getByRuberToken(accessToken);

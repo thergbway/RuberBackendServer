@@ -14,6 +14,9 @@ import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity
 @Table(name = "vk_tokens")
+@NamedQueries({
+    @NamedQuery(name = "VkToken.getByValue", query = "select t from VkToken t where t.value = :value")
+})
 public class VkToken {
     @Id
     @GeneratedValue(strategy = SEQUENCE)

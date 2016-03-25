@@ -3,6 +3,7 @@ package com.ruber.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ruber.controller.dto.AddPinnedFileRequestPart;
 import com.ruber.controller.dto.PinnedFile;
+import com.ruber.exception.MultipartFileIOException;
 import com.ruber.service.PinnedItemsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -96,7 +97,7 @@ public class PinnedFilesController {
 
             return new ResponseEntity<>(headers, HttpStatus.CREATED);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new MultipartFileIOException(e);
         }
     }
 
