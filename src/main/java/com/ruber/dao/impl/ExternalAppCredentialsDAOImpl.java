@@ -1,5 +1,6 @@
-package com.ruber.dao;
+package com.ruber.dao.impl;
 
+import com.ruber.dao.ExternalAppCredentialsDAO;
 import com.ruber.dao.entity.ExternalAppCredential;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;

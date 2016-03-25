@@ -1,5 +1,6 @@
-package com.ruber.dao;
+package com.ruber.dao.impl;
 
+import com.ruber.dao.OrderPositionDAO;
 import com.ruber.dao.entity.OrderPosition;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,5 +1,6 @@
-package com.ruber.dao;
+package com.ruber.dao.impl;
 
+import com.ruber.dao.VkTokenDAO;
 import com.ruber.dao.entity.VkToken;
 import org.springframework.stereotype.Repository;
 

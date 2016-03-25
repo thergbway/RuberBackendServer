@@ -1,5 +1,6 @@
-package com.ruber.dao;
+package com.ruber.dao.impl;
 
+import com.ruber.dao.RuberTokenDAO;
 import com.ruber.dao.entity.RuberToken;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
