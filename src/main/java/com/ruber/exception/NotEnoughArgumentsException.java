@@ -2,7 +2,7 @@ package com.ruber.exception;
 
 import java.util.List;
 
-public class NotEnoughArgumentsException extends BackendException {
+public class NotEnoughArgumentsException extends BadRequestBackendException {
     public NotEnoughArgumentsException(List<String> notSpecifiedArguments) {
         super("not enough required arguments were specified: " + argsToPrettyString(notSpecifiedArguments),
             ErrorCodes.NOT_ENOUGH_ARGUMENTS.getCode());

@@ -1,6 +1,6 @@
 package com.ruber.exception;
 
-public abstract class BackendException extends RuntimeException {
+abstract class BackendException extends RuntimeException {
     private String message;
     private Integer code;
 
