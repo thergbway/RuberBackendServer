@@ -1,6 +1,6 @@
 package com.ruber.exception;
 
-enum ErrorCodes {
+public enum ErrorCodes {
     INVALID_EXTERNAL_APP_CREDENTIALS(100),
     INVALID_ACCESS_TOKEN(101),
     NO_SUCH_ORDER(200),
@@ -9,7 +9,8 @@ enum ErrorCodes {
     NOT_ENOUGH_ARGUMENTS(500),
     MALFORMED_URL(501),
     INVALID_REQUEST_JSON(502),
-    MULTIPART_IO_EXCEPTION(503);
+    MULTIPART_IO_EXCEPTION(503),
+    INTERNAL_ERROR(600);
 
     private Integer code;
 
