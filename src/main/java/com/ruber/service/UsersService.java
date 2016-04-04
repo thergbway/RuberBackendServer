@@ -5,7 +5,6 @@ import com.ruber.dao.VkTokenDAO;
 import com.ruber.dao.entity.RuberToken;
 import com.ruber.dao.entity.User;
 import com.ruber.dao.entity.VkToken;
-import com.ruber.exception.InvalidAccessTokenException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,9 +21,6 @@ public class UsersService {
 
     @Autowired
     private VkTokenDAO vkTokenDAO;
-
-    @Autowired
-    private RuberTokensService ruberTokensService;
 
     public boolean isUserExist(Integer vkId) {
         return userDAO.getByVkId(vkId) != null;
@@ -48,32 +44,20 @@ public class UsersService {
         user.getRuberTokens().add(new RuberToken(null, ruberToken));
     }
 
-    public Set<Integer> getConnectedVkGroupIds(String accessToken) {
-        if (!ruberTokensService.isValidToken(accessToken)) {
-            throw new InvalidAccessTokenException();
-        }
-
-        User user = userDAO.getByRuberToken(accessToken);
+    public Set<Integer> getConnectedVkGroupIds(Integer userId) {
+        User user = userDAO.read(userId);
 
         return new HashSet<>(user.getConnectedVkGroupIds());//fixme why should we copy all elements(tip: lazy init and transactions)?
     }
 
-    public void addConnectedVkGroupId(String accessToken, Integer vkGroupId) {
-        if (!ruberTokensService.isValidToken(accessToken)) {
-            throw new InvalidAccessTokenException();
-        }
-
-        User user = userDAO.getByRuberToken(accessToken);
+    public void addConnectedVkGroupId(Integer userId, Integer vkGroupId) {
+        User user = userDAO.read(userId);
 
         user.getConnectedVkGroupIds().add(vkGroupId);
     }
 
-    public void deleteConnectedVkGroupId(String accessToken, Integer vkGroupId) {
-        if (!ruberTokensService.isValidToken(accessToken)) {
-            throw new InvalidAccessTokenException();
-        }
-
-        User user = userDAO.getByRuberToken(accessToken);
+    public void deleteConnectedVkGroupId(Integer userId, Integer vkGroupId) {
+        User user = userDAO.read(userId);
 
         user.getConnectedVkGroupIds().remove(vkGroupId);
     }

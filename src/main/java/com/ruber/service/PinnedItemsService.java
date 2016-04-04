@@ -9,7 +9,6 @@ import com.ruber.dao.UserDAO;
 import com.ruber.dao.entity.Order;
 import com.ruber.dao.entity.PinnedItem;
 import com.ruber.dao.entity.User;
-import com.ruber.exception.InvalidAccessTokenException;
 import com.ruber.exception.NoSuchOrderException;
 import com.ruber.exception.NoSuchPinnedItemException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,44 +25,37 @@ import static com.ruber.util.TimeUtils.getCurrentTimestamp;
 @Transactional
 public class PinnedItemsService {
     @Autowired
-    private RuberTokensService ruberTokensService;
-
-    @Autowired
     private UserDAO userDAO;
 
     @Autowired
     private PinnedItemDAO pinnedItemDAO;
 
-    public List<PinnedMessage> getPinnedMessages(String accessToken, Integer orderId) {
-        return getPinnedItems(accessToken, orderId)
+    public List<PinnedMessage> getPinnedMessages(Integer userId, Integer orderId) {
+        return getPinnedItems(userId, orderId)
             .stream()
             .filter(pinnedItem -> pinnedItem.getClass().equals(com.ruber.dao.entity.PinnedMessage.class))
             .map(pinnedItem -> PinnedMessage.buildFromEntity(((com.ruber.dao.entity.PinnedMessage) pinnedItem)))
             .collect(Collectors.toList());
     }
 
-    public List<PinnedText> getPinnedTexts(String accessToken, Integer orderId) {
-        return getPinnedItems(accessToken, orderId)
+    public List<PinnedText> getPinnedTexts(Integer userId, Integer orderId) {
+        return getPinnedItems(userId, orderId)
             .stream()
             .filter(pinnedItem -> pinnedItem.getClass().equals(com.ruber.dao.entity.PinnedText.class))
             .map(pinnedItem -> PinnedText.buildFromEntity(((com.ruber.dao.entity.PinnedText) pinnedItem)))
             .collect(Collectors.toList());
     }
 
-    public List<PinnedFile> getPinnedFiles(String accessToken, Integer orderId) {
-        return getPinnedItems(accessToken, orderId)
+    public List<PinnedFile> getPinnedFiles(Integer userId, Integer orderId) {
+        return getPinnedItems(userId, orderId)
             .stream()
             .filter(pinnedItem -> pinnedItem.getClass().equals(com.ruber.dao.entity.PinnedFile.class))
             .map(pinnedItem -> PinnedFile.buildFromEntity(((com.ruber.dao.entity.PinnedFile) pinnedItem)))
             .collect(Collectors.toList());
     }
 
-    private List<PinnedItem> getPinnedItems(String accessToken, Integer orderId) {
-        if (!ruberTokensService.isValidToken(accessToken)) {
-            throw new InvalidAccessTokenException();
-        }
-
-        User user = userDAO.getByRuberToken(accessToken);
+    private List<PinnedItem> getPinnedItems(Integer userId, Integer orderId) {
+        User user = userDAO.read(userId);
 
         List<Order> orders = user
             .getOrders()
@@ -80,27 +72,23 @@ public class PinnedItemsService {
             .getPinnedItems();
     }
 
-    public PinnedMessage getPinnedMessage(String accessToken, Integer orderId, Integer messageId) {
+    public PinnedMessage getPinnedMessage(Integer userId, Integer orderId, Integer messageId) {
         return PinnedMessage
-            .buildFromEntity((com.ruber.dao.entity.PinnedMessage) getPinnedItem(accessToken, orderId, messageId));
+            .buildFromEntity((com.ruber.dao.entity.PinnedMessage) getPinnedItem(userId, orderId, messageId));
     }
 
-    public PinnedText getPinnedText(String accessToken, Integer orderId, Integer textId) {
+    public PinnedText getPinnedText(Integer userId, Integer orderId, Integer textId) {
         return PinnedText
-            .buildFromEntity((com.ruber.dao.entity.PinnedText) getPinnedItem(accessToken, orderId, textId));
+            .buildFromEntity((com.ruber.dao.entity.PinnedText) getPinnedItem(userId, orderId, textId));
     }
 
-    public PinnedFile getPinnedFile(String accessToken, Integer orderId, Integer fileId) {
+    public PinnedFile getPinnedFile(Integer userId, Integer orderId, Integer fileId) {
         return PinnedFile
-            .buildFromEntity((com.ruber.dao.entity.PinnedFile) getPinnedItem(accessToken, orderId, fileId));
+            .buildFromEntity((com.ruber.dao.entity.PinnedFile) getPinnedItem(userId, orderId, fileId));
     }
 
-    private PinnedItem getPinnedItem(String accessToken, Integer orderId, Integer itemId) {
-        if (!ruberTokensService.isValidToken(accessToken)) {
-            throw new InvalidAccessTokenException();
-        }
-
-        User user = userDAO.getByRuberToken(accessToken);
+    private PinnedItem getPinnedItem(Integer userId, Integer orderId, Integer itemId) {
+        User user = userDAO.read(userId);
 
         List<Order> orders = user
             .getOrders()
@@ -125,41 +113,37 @@ public class PinnedItemsService {
             throw new NoSuchPinnedItemException(itemId);
     }
 
-    public byte[] getPinnedFileContent(String accessToken, Integer orderId, Integer fileId) {
+    public byte[] getPinnedFileContent(Integer userId, Integer orderId, Integer fileId) {
         com.ruber.dao.entity.PinnedFile pinnedFile
-            = (com.ruber.dao.entity.PinnedFile) getPinnedItem(accessToken, orderId, fileId);
+            = (com.ruber.dao.entity.PinnedFile) getPinnedItem(userId, orderId, fileId);
 
         return pinnedFile.getContent();
     }
 
-    public String getPinnedFileFilename(String accessToken, Integer orderId, Integer fileId) {
+    public String getPinnedFileFilename(Integer userId, Integer orderId, Integer fileId) {
         com.ruber.dao.entity.PinnedFile pinnedFile
-            = (com.ruber.dao.entity.PinnedFile) getPinnedItem(accessToken, orderId, fileId);
+            = (com.ruber.dao.entity.PinnedFile) getPinnedItem(userId, orderId, fileId);
 
         return pinnedFile.getFileName();
     }
 
-    public Integer addPinnedMessage(String accessToken, Integer orderId, PinnedMessage pinnedMessageInfo) {
-        return addPinnedItem(accessToken, orderId, pinnedMessageInfo.toEntity(getCurrentTimestamp()));
+    public Integer addPinnedMessage(Integer userId, Integer orderId, PinnedMessage pinnedMessageInfo) {
+        return addPinnedItem(userId, orderId, pinnedMessageInfo.toEntity(getCurrentTimestamp()));
     }
 
-    public Integer addPinnedText(String accessToken, Integer orderId, PinnedText pinnedTextInfo) {
-        return addPinnedItem(accessToken, orderId, pinnedTextInfo.toEntity(getCurrentTimestamp()));
+    public Integer addPinnedText(Integer userId, Integer orderId, PinnedText pinnedTextInfo) {
+        return addPinnedItem(userId, orderId, pinnedTextInfo.toEntity(getCurrentTimestamp()));
     }
 
-    public Integer addPinnedFile(String accessToken, Integer orderId, AddPinnedFileRequestPart fileInfo,
+    public Integer addPinnedFile(Integer userId, Integer orderId, AddPinnedFileRequestPart fileInfo,
                                  byte[] content, String fileName) {
         com.ruber.dao.entity.PinnedFile pinnedFile =
             new com.ruber.dao.entity.PinnedFile(null, fileInfo.getPosition(), getCurrentTimestamp(), content, fileName);
-        return addPinnedItem(accessToken, orderId, pinnedFile);
+        return addPinnedItem(userId, orderId, pinnedFile);
     }
 
-    private Integer addPinnedItem(String accessToken, Integer orderId, PinnedItem pinnedItem) {
-        if (!ruberTokensService.isValidToken(accessToken)) {
-            throw new InvalidAccessTokenException();
-        }
-
-        User user = userDAO.getByRuberToken(accessToken);
+    private Integer addPinnedItem(Integer userId, Integer orderId, PinnedItem pinnedItem) {
+        User user = userDAO.read(userId);
 
         List<Order> orders = user
             .getOrders()
@@ -181,12 +165,8 @@ public class PinnedItemsService {
         return pinnedItem.getId();
     }
 
-    public void deletePinnedItem(String accessToken, Integer orderId, Integer itemId) {
-        if (!ruberTokensService.isValidToken(accessToken)) {
-            throw new InvalidAccessTokenException();
-        }
-
-        User user = userDAO.getByRuberToken(accessToken);
+    public void deletePinnedItem(Integer userId, Integer orderId, Integer itemId) {
+        User user = userDAO.read(userId);
 
         List<Order> orders = user
             .getOrders()

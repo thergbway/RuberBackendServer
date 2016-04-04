@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
@@ -23,42 +24,48 @@ public class VkItemReplicasController {
     @Autowired
     OrderPositionsService orderPositionsService;
 
+    @ModelAttribute("user_id")
+    public Integer getUserId(HttpServletRequest request) {//fixme this method is presented in about all controllers. Use hierarchy for writing it only once
+        return ((Integer) request.getAttribute("user_id"));
+    }
+
     @RequestMapping
     public List<VkItemReplica> getVkItemReplicas(
-        @RequestParam(value = "access_token", required = true) String accessToken,
-        @PathVariable("orderId") Integer orderId
+        @PathVariable("orderId") Integer orderId,
+        @ModelAttribute("user_id") Integer userId
     ) {
-        return orderPositionsService.getVkItemReplicas(accessToken, orderId);
+        return orderPositionsService.getVkItemReplicas(userId, orderId);
     }
 
     @RequestMapping("/{itemId}")
     public VkItemReplica getVkItemReplica(
-        @RequestParam(value = "access_token", required = true) String accessToken,
         @PathVariable("orderId") Integer orderId,
-        @PathVariable("itemId") Integer itemId
+        @PathVariable("itemId") Integer itemId,
+        @ModelAttribute("user_id") Integer userId
     ) {
-        return orderPositionsService.getVkItemReplica(accessToken, orderId, itemId);
+        return orderPositionsService.getVkItemReplica(userId, orderId, itemId);
     }
 
     @RequestMapping(value = "/{itemId}", method = DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteVkItemReplica(
-        @RequestParam(value = "access_token", required = true) String accessToken,
         @PathVariable("orderId") Integer orderId,
-        @PathVariable("itemId") Integer itemId
+        @PathVariable("itemId") Integer itemId,
+        @ModelAttribute("user_id") Integer userId
     ) {
-        orderPositionsService.deleteOrderPosition(accessToken, orderId, itemId);
+        orderPositionsService.deleteOrderPosition(userId, orderId, itemId);
     }
 
     @RequestMapping(method = POST)
     public ResponseEntity<Void> addVkItemReplica(
-        @RequestParam(value = "access_token", required = true) String accessToken,
         @PathVariable("orderId") Integer orderId,
         @RequestBody(required = true) VkItemReplica itemReplica,
 
+        @ModelAttribute("user_id") Integer userId,
+
         UriComponentsBuilder builder
     ) {
-        Integer itemId = orderPositionsService.addVkItemReplica(accessToken, orderId, itemReplica);
+        Integer itemId = orderPositionsService.addVkItemReplica(userId, orderId, itemReplica);
 
         UriComponents uriComponents = builder
             .path(PATH + "/{itemId}")

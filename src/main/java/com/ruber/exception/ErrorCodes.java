@@ -3,6 +3,7 @@ package com.ruber.exception;
 public enum ErrorCodes {
     INVALID_EXTERNAL_APP_CREDENTIALS(100),
     INVALID_ACCESS_TOKEN(101),
+    NO_ACCESS_TOKEN(102),
     NO_SUCH_ORDER(200),
     NO_SUCH_ORDER_POSITION(300),
     NO_SUCH_PINNED_ITEM(400),

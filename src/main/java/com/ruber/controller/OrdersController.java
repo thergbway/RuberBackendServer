@@ -25,6 +25,7 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -34,6 +35,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 @RequestMapping(OrdersController.PATH)
 public class OrdersController {
     public static final String PATH = "/orders";
+
+    @Autowired
+    private OrdersService ordersService;
 
     @Value("WEB-INF/schema/orderUpdateSchema.json")//fixme can be removed because it needs only once in post construct
     private Resource orderUpdateSchemaFile;
@@ -55,17 +59,19 @@ public class OrdersController {
         orderUpdateSchema = JsonSchemaFactory.byDefault().getJsonSchema(orderUpdateSchemaAsJsonNode);
     }
 
-    @Autowired
-    private OrdersService ordersService;
+    @ModelAttribute("user_id")
+    public Integer getUserId(HttpServletRequest request) {//fixme this method is presented in about all controllers. Use hierarchy for writing it only once
+        return ((Integer) request.getAttribute("user_id"));
+    }
 
     @RequestMapping(method = POST)
     public ResponseEntity<Void> addOrder(
-        @RequestParam(value = "access_token", required = true) String accessToken,
         @RequestBody(required = true) AddOrderRequest addOrderRequset,
+        @ModelAttribute("user_id") Integer userId,
 
         UriComponentsBuilder builder) {
 
-        Integer orderId = ordersService.addOrder(accessToken, addOrderRequset);
+        Integer orderId = ordersService.addOrder(userId, addOrderRequset);
 
         UriComponents uriComponents = builder
             .path(PATH + "/{id}")
@@ -77,31 +83,30 @@ public class OrdersController {
         return new ResponseEntity<>(headers, HttpStatus.CREATED);
     }
 
-    @RequestMapping
-    public List<OrderPreview> getOrdersPreview(
-        @RequestParam(value = "access_token", required = true) String accessToken) {
 
-        return ordersService.getOrdersPreview(accessToken);
+    @RequestMapping
+    public List<OrderPreview> getOrdersPreview(@ModelAttribute("user_id") Integer userId) {
+        return ordersService.getOrdersPreview(userId);
     }
 
     @RequestMapping("/{id}")
     public GetOrderResponse getOrder(
-        @RequestParam(value = "access_token", required = true) String accessToken,
-        @PathVariable("id") Integer orderId) {
+        @PathVariable("id") Integer orderId,
+        @ModelAttribute("user_id") Integer userId) {
 
-        return ordersService.getOrder(accessToken, orderId);
+        return ordersService.getOrder(userId, orderId);
     }
 
     @RequestMapping(value = "/{id}", method = PUT)
     @ResponseStatus(HttpStatus.OK)
     public void updateOrder(
-        @RequestParam(value = "access_token", required = true) String accessToken,
         @PathVariable("id") Integer orderId,
-        @RequestBody(required = true) JsonNode updateInfo
+        @RequestBody(required = true) JsonNode updateInfo,
+        @ModelAttribute("user_id") Integer userId
     ) {
         validateUpdateOrderJsonNode(updateInfo);
 
-        ordersService.updateOrder(accessToken, orderId, updateInfo);
+        ordersService.updateOrder(userId, orderId, updateInfo);
     }
 
     private void validateUpdateOrderJsonNode(JsonNode node) {

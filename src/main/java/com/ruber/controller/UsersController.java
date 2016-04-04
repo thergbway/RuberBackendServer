@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Set;
 
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
@@ -18,31 +19,35 @@ public class UsersController {
     @Autowired
     private UsersService usersService;
 
-    @RequestMapping("/connected_groups")
-    public Set<Integer> getConnectedVkGroupIds(
-        @RequestParam("access_token") String accessToken) {
+    @ModelAttribute("user_id")
+    public Integer getUserId(HttpServletRequest request) {//fixme this method is presented in about all controllers. Use hierarchy for writing it only once
+        return ((Integer) request.getAttribute("user_id"));
+    }
 
-        return usersService.getConnectedVkGroupIds(accessToken);
+    @RequestMapping("/connected_groups")
+    public Set<Integer> getConnectedVkGroupIds(@ModelAttribute("user_id") Integer userId) {
+
+        return usersService.getConnectedVkGroupIds(userId);
     }
 
     @RequestMapping(value = "connected_groups", method = POST)
     @ResponseStatus(HttpStatus.CREATED)
     public void addConnectedVkGroupId(
-        @RequestParam("access_token") String accessToken,
-        @RequestBody JsonNode requestBody
+        @RequestBody JsonNode requestBody,
+        @ModelAttribute("user_id") Integer userId
     ) {
         if (!requestBody.has("vk_group_id") || requestBody.get("vk_group_id").isNull())
             throw new InvalidRequestJsonException("vk_group_id is missed or equals null");
         else
-            usersService.addConnectedVkGroupId(accessToken, requestBody.get("vk_group_id").asInt());
+            usersService.addConnectedVkGroupId(userId, requestBody.get("vk_group_id").asInt());
     }
 
     @RequestMapping(value = "/connected_groups/{group_id}", method = DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteConnectedVkGroupId(
-        @RequestParam("access_token") String accessToken,
-        @PathVariable("group_id") Integer vkGroupId
+        @PathVariable("group_id") Integer vkGroupId,
+        @ModelAttribute("user_id") Integer userId
     ) {
-        usersService.deleteConnectedVkGroupId(accessToken, vkGroupId);
+        usersService.deleteConnectedVkGroupId(userId, vkGroupId);
     }
 }

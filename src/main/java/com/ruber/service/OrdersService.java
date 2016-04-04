@@ -8,7 +8,6 @@ import com.ruber.controller.dto.OrderPreview;
 import com.ruber.dao.OrderDAO;
 import com.ruber.dao.UserDAO;
 import com.ruber.dao.entity.*;
-import com.ruber.exception.InvalidAccessTokenException;
 import com.ruber.exception.InvalidURLException;
 import com.ruber.exception.NoSuchOrderException;
 import com.ruber.exception.NotEnoughArgumentsException;
@@ -29,20 +28,13 @@ import static java.util.Arrays.asList;
 @Transactional//TODO
 public class OrdersService {
     @Autowired
-    private RuberTokensService ruberTokensService;
-
-    @Autowired
     private UserDAO userDAO;
 
     @Autowired
     private OrderDAO orderDAO;
 
-    public Integer addOrder(String accessToken, AddOrderRequest addOrderRequest) {
-        if (!ruberTokensService.isValidToken(accessToken)) {
-            throw new InvalidAccessTokenException();
-        }
-
-        User user = userDAO.getByRuberToken(accessToken);
+    public Integer addOrder(Integer userId, AddOrderRequest addOrderRequest) {
+        User user = userDAO.read(userId);
 
         Long createdTimestamp = TimeUtils.getCurrentTimestamp();
 
@@ -57,13 +49,8 @@ public class OrdersService {
         return order.getId();
     }
 
-    public GetOrderResponse getOrder(String accessToken, Integer orderId) {
-        if (!ruberTokensService.isValidToken(accessToken)) {
-            throw new InvalidAccessTokenException();
-        }
-
-        //TODO it is better to create a named query that gets order by Id for the specified user
-        User user = userDAO.getByRuberToken(accessToken);
+    public GetOrderResponse getOrder(Integer userId, Integer orderId) {
+        User user = userDAO.read(userId);
 
         List<Order> orders = user
             .getOrders()
@@ -79,12 +66,8 @@ public class OrdersService {
         return GetOrderResponse.buildFromOrder(order);
     }
 
-    public List<OrderPreview> getOrdersPreview(String accessToken) {
-        if (!ruberTokensService.isValidToken(accessToken)) {
-            throw new InvalidAccessTokenException();
-        }
-
-        User user = userDAO.getByRuberToken(accessToken);
+    public List<OrderPreview> getOrdersPreview(Integer userId) {
+        User user = userDAO.read(userId);
 
         return user
             .getOrders()
@@ -93,13 +76,8 @@ public class OrdersService {
             .collect(Collectors.toList());
     }
 
-    public void updateOrder(String accessToken, Integer orderId, JsonNode updateInfo) {//fixme refactor: create several methods
-        if (!ruberTokensService.isValidToken(accessToken)) {
-            throw new InvalidAccessTokenException();
-        }
-
-        //TODO it is better to create a named query that gets order by Id for the specified user
-        User user = userDAO.getByRuberToken(accessToken);
+    public void updateOrder(Integer userId, Integer orderId, JsonNode updateInfo) {//fixme refactor: create several methods
+        User user = userDAO.read(userId);
 
         List<Order> orders = user
             .getOrders()

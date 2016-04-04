@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
 import java.beans.PropertyEditorSupport;
 import java.io.IOException;
 import java.util.List;
@@ -46,47 +47,53 @@ public class PinnedFilesController {
             });
     }
 
+    @ModelAttribute("user_id")
+    public Integer getUserId(HttpServletRequest request) {//fixme this method is presented in about all controllers. Use hierarchy for writing it only once
+        return ((Integer) request.getAttribute("user_id"));
+    }
+
 
     @RequestMapping
     public List<PinnedFile> getPinnedFiles(
-        @RequestParam("access_token") String accessToken,
-        @PathVariable("orderId") Integer orderId
+        @PathVariable("orderId") Integer orderId,
+        @ModelAttribute("user_id") Integer userId
     ) {
-        return pinnedItemsService.getPinnedFiles(accessToken, orderId);
+        return pinnedItemsService.getPinnedFiles(userId, orderId);
     }
 
     @RequestMapping("/{fileId}")
     public PinnedFile getPinnedFile(
-        @RequestParam("access_token") String accessToken,
         @PathVariable("orderId") Integer orderId,
-        @PathVariable("fileId") Integer fileId
+        @PathVariable("fileId") Integer fileId,
+        @ModelAttribute("user_id") Integer userId
     ) {
-        return pinnedItemsService.getPinnedFile(accessToken, orderId, fileId);
+        return pinnedItemsService.getPinnedFile(userId, orderId, fileId);
     }
 
     @RequestMapping(value = "/{fileId}", method = DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePinnedFile(
-        @RequestParam("access_token") String accessToken,
         @PathVariable("orderId") Integer orderId,
-        @PathVariable("fileId") Integer fileId
+        @PathVariable("fileId") Integer fileId,
+        @ModelAttribute("user_id") Integer userId
     ) {
-        pinnedItemsService.deletePinnedItem(accessToken, orderId, fileId);
+        pinnedItemsService.deletePinnedItem(userId, orderId, fileId);
     }
 
     @RequestMapping(method = POST)
     public ResponseEntity<Void> addPinnedFile(
-        @RequestParam("access_token") String accessToken,
         @PathVariable("orderId") Integer orderId,
         @RequestParam("file_info") AddPinnedFileRequestPart fileInfo,
 
         @RequestPart("content") MultipartFile fileContent,
 
+        @ModelAttribute("user_id") Integer userId,
+
         UriComponentsBuilder builder
     ) {
         try {
             Integer pinnedFileId = pinnedItemsService
-                .addPinnedFile(accessToken, orderId, fileInfo, fileContent.getBytes(), fileContent.getOriginalFilename());
+                .addPinnedFile(userId, orderId, fileInfo, fileContent.getBytes(), fileContent.getOriginalFilename());
 
             UriComponents uriComponents = builder
                 .path(PATH + "/{pinnedFileId}")
@@ -103,12 +110,12 @@ public class PinnedFilesController {
 
     @RequestMapping("/{fileId}/content")
     public ResponseEntity<byte[]> getPinnedFileContent(
-        @RequestParam("access_token") String accessToken,
         @PathVariable("orderId") Integer orderId,
-        @PathVariable("fileId") Integer fileId
+        @PathVariable("fileId") Integer fileId,
+        @ModelAttribute("user_id") Integer userId
     ) {
-        byte[] content = pinnedItemsService.getPinnedFileContent(accessToken, orderId, fileId);
-        String filename = pinnedItemsService.getPinnedFileFilename(accessToken, orderId, fileId);
+        byte[] content = pinnedItemsService.getPinnedFileContent(userId, orderId, fileId);
+        String filename = pinnedItemsService.getPinnedFileFilename(userId, orderId, fileId);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);

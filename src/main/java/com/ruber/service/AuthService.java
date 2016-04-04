@@ -43,6 +43,4 @@ public class AuthService {
 
         return new AuthResponse(ruberToken, vkId);
     }
-
-
 }

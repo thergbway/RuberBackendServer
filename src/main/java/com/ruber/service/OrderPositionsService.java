@@ -7,7 +7,6 @@ import com.ruber.dao.UserDAO;
 import com.ruber.dao.entity.Order;
 import com.ruber.dao.entity.OrderPosition;
 import com.ruber.dao.entity.User;
-import com.ruber.exception.InvalidAccessTokenException;
 import com.ruber.exception.NoSuchOrderException;
 import com.ruber.exception.NoSuchOrderPositionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,18 +20,14 @@ import java.util.stream.Collectors;
 @Transactional// fixme
 public class OrderPositionsService {
     @Autowired
-    private RuberTokensService ruberTokensService;
-
-    @Autowired
     private UserDAO userDAO;
 
     @Autowired
     private OrderPositionDAO orderPositionDAO;
 
-    public List<ItemReplica> getItemReplicas(String accessToken, Integer orderId) {
+    public List<ItemReplica> getItemReplicas(Integer userId, Integer orderId) {
         //fixme check whether this order belongs to authenticated user
-
-        List<OrderPosition> orderPositions = getOrderPositions(accessToken, orderId);
+        List<OrderPosition> orderPositions = getOrderPositions(userId, orderId);
 
         return orderPositions
             .stream()
@@ -41,10 +36,9 @@ public class OrderPositionsService {
             .collect(Collectors.toList());
     }
 
-    public List<VkItemReplica> getVkItemReplicas(String accessToken, Integer orderId) {
+    public List<VkItemReplica> getVkItemReplicas(Integer userId, Integer orderId) {
         //fixme check whether this order belongs to authenticated user
-
-        List<OrderPosition> orderPositions = getOrderPositions(accessToken, orderId);
+        List<OrderPosition> orderPositions = getOrderPositions(userId, orderId);
 
         return orderPositions
             .stream()
@@ -53,24 +47,20 @@ public class OrderPositionsService {
             .collect(Collectors.toList());
     }
 
-    public ItemReplica getItemReplica(String accessToken, Integer orderId, Integer itemId) {
+    public ItemReplica getItemReplica(Integer userId, Integer orderId, Integer itemId) {
         //fixme check whether this order belongs to authenticated user
         return ItemReplica
-            .buildFromEntity((com.ruber.dao.entity.ItemReplica) getOrderPosition(accessToken, orderId, itemId));
+            .buildFromEntity((com.ruber.dao.entity.ItemReplica) getOrderPosition(userId, orderId, itemId));
     }
 
-    public VkItemReplica getVkItemReplica(String accessToken, Integer orderId, Integer itemId) {
+    public VkItemReplica getVkItemReplica(Integer userId, Integer orderId, Integer itemId) {
         //fixme check whether this order belongs to authenticated user
         return VkItemReplica
-            .buildFromEntity((com.ruber.dao.entity.VkItemReplica) getOrderPosition(accessToken, orderId, itemId));
+            .buildFromEntity((com.ruber.dao.entity.VkItemReplica) getOrderPosition(userId, orderId, itemId));
     }
 
-    public void deleteOrderPosition(String accessToken, Integer orderId, Integer positionId) {
-        if (!ruberTokensService.isValidToken(accessToken)) {
-            throw new InvalidAccessTokenException();
-        }
-
-        User user = userDAO.getByRuberToken(accessToken);
+    public void deleteOrderPosition(Integer userId, Integer orderId, Integer positionId) {
+        User user = userDAO.read(userId);
 
         List<Order> orders = user
             .getOrders()
@@ -95,20 +85,16 @@ public class OrderPositionsService {
         orderPositionDAO.deleteById(positionId);
     }
 
-    public Integer addItemReplica(String accessToken, Integer orderId, ItemReplica itemReplica) {
-        return addOrderPosition(accessToken, orderId, itemReplica.toEntity());
+    public Integer addItemReplica(Integer userId, Integer orderId, ItemReplica itemReplica) {
+        return addOrderPosition(userId, orderId, itemReplica.toEntity());
     }
 
-    public Integer addVkItemReplica(String accessToken, Integer orderId, VkItemReplica vkItemReplica) {
-        return addOrderPosition(accessToken, orderId, vkItemReplica.toEntity());
+    public Integer addVkItemReplica(Integer userId, Integer orderId, VkItemReplica vkItemReplica) {
+        return addOrderPosition(userId, orderId, vkItemReplica.toEntity());
     }
 
-    private Integer addOrderPosition(String accessToken, Integer orderId, OrderPosition position) {
-        if (!ruberTokensService.isValidToken(accessToken)) {
-            throw new InvalidAccessTokenException();
-        }
-
-        User user = userDAO.getByRuberToken(accessToken);
+    private Integer addOrderPosition(Integer userId, Integer orderId, OrderPosition position) {
+        User user = userDAO.read(userId);
 
         List<Order> orders = user
             .getOrders()
@@ -128,12 +114,8 @@ public class OrderPositionsService {
         return position.getId();
     }
 
-    private OrderPosition getOrderPosition(String accessToken, Integer orderId, Integer positionId) {
-        if (!ruberTokensService.isValidToken(accessToken)) {
-            throw new InvalidAccessTokenException();
-        }
-
-        User user = userDAO.getByRuberToken(accessToken);
+    private OrderPosition getOrderPosition(Integer userId, Integer orderId, Integer positionId) {
+        User user = userDAO.read(userId);
 
         List<Order> orders = user
             .getOrders()
@@ -158,12 +140,8 @@ public class OrderPositionsService {
         return orderPositions.get(0);
     }
 
-    private List<OrderPosition> getOrderPositions(String accessToken, Integer orderId) {
-        if (!ruberTokensService.isValidToken(accessToken)) {
-            throw new InvalidAccessTokenException();
-        }
-
-        User user = userDAO.getByRuberToken(accessToken);
+    private List<OrderPosition> getOrderPositions(Integer userId, Integer orderId) {
+        User user = userDAO.read(userId);
 
         List<Order> orders = user
             .getOrders()

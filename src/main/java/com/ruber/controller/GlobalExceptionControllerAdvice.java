@@ -55,6 +55,8 @@ public class GlobalExceptionControllerAdvice {
     @ExceptionHandler(Exception.class)
     @ResponseBody
     public ObjectNode handleForbiddenBackendExceptions(Exception ex, HttpServletResponse response) {
+        ex.printStackTrace();
+
         ObjectNode node = JsonNodeFactory.instance.objectNode();
         node.put("code", ErrorCodes.INTERNAL_ERROR.getCode());
         node.put("message", ex.getMessage());

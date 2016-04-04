@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
@@ -23,32 +24,38 @@ public class PinnedTextsController {
     @Autowired
     private PinnedItemsService pinnedItemsService;
 
+    @ModelAttribute("user_id")
+    public Integer getUserId(HttpServletRequest request) {//fixme this method is presented in about all controllers. Use hierarchy for writing it only once
+        return ((Integer) request.getAttribute("user_id"));
+    }
+
     @RequestMapping
     public List<PinnedText> getPinnedTexts(
-        @RequestParam("access_token") String accessToken,
-        @PathVariable("orderId") Integer orderId
+        @PathVariable("orderId") Integer orderId,
+        @ModelAttribute("user_id") Integer userId
     ) {
-        return pinnedItemsService.getPinnedTexts(accessToken, orderId);
+        return pinnedItemsService.getPinnedTexts(userId, orderId);
     }
 
     @RequestMapping("/{textId}")
     public PinnedText getPinnedText(
-        @RequestParam("access_token") String accessToken,
         @PathVariable("orderId") Integer orderId,
-        @PathVariable("textId") Integer textId
+        @PathVariable("textId") Integer textId,
+        @ModelAttribute("user_id") Integer userId
     ) {
-        return pinnedItemsService.getPinnedText(accessToken, orderId, textId);
+        return pinnedItemsService.getPinnedText(userId, orderId, textId);
     }
 
     @RequestMapping(method = POST)
     public ResponseEntity<Void> createPinnedText(
-        @RequestParam("access_token") String accessToken,
         @PathVariable("orderId") Integer orderId,
         @RequestBody PinnedText pinnedTextInfo,
 
+        @ModelAttribute("user_id") Integer userId,
+
         UriComponentsBuilder builder
     ) {
-        Integer textId = pinnedItemsService.addPinnedText(accessToken, orderId, pinnedTextInfo);
+        Integer textId = pinnedItemsService.addPinnedText(userId, orderId, pinnedTextInfo);
 
         UriComponents uriComponents = builder
             .path(PATH + "/{textId}")
@@ -63,10 +70,10 @@ public class PinnedTextsController {
     @RequestMapping(value = "/{textId}", method = DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePinnedText(
-        @RequestParam("access_token") String accessToken,
         @PathVariable("orderId") Integer orderId,
-        @PathVariable("textId") Integer textId
+        @PathVariable("textId") Integer textId,
+        @ModelAttribute("user_id") Integer userId
     ) {
-        pinnedItemsService.deletePinnedItem(accessToken, orderId, textId);
+        pinnedItemsService.deletePinnedItem(userId, orderId, textId);
     }
 }
