@@ -31,17 +31,17 @@ public class ItemReplicasController {
 
     @RequestMapping
     public List<ItemReplica> getItemReplicas(
-        @PathVariable("orderId") Integer orderId,
-        @ModelAttribute("user_id") Integer userId
+        @ModelAttribute("user_id") Integer userId,
+        @PathVariable("orderId") Integer orderId
     ) {
         return orderPositionsService.getItemReplicas(userId, orderId);
     }
 
     @RequestMapping("/{itemId}")
     public ItemReplica getItemReplica(
+        @ModelAttribute("user_id") Integer userId,
         @PathVariable("orderId") Integer orderId,
-        @PathVariable("itemId") Integer itemId,
-        @ModelAttribute("user_id") Integer userId
+        @PathVariable("itemId") Integer itemId
     ) {
         return orderPositionsService.getItemReplica(userId, orderId, itemId);
     }
@@ -49,18 +49,18 @@ public class ItemReplicasController {
     @RequestMapping(value = "/{itemId}", method = DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteItemReplica(
+        @ModelAttribute("user_id") Integer userId,
         @PathVariable("orderId") Integer orderId,
-        @PathVariable("itemId") Integer itemId,
-        @ModelAttribute("user_id") Integer userId
+        @PathVariable("itemId") Integer itemId
     ) {
         orderPositionsService.deleteOrderPosition(userId, orderId, itemId);
     }
 
     @RequestMapping(method = POST)
     public ResponseEntity<Void> addItemReplica(
+        @ModelAttribute("user_id") Integer userId,
         @PathVariable("orderId") Integer orderId,
         @RequestBody(required = true) ItemReplica itemReplica,
-        @ModelAttribute("user_id") Integer userId,
 
         UriComponentsBuilder builder
     ) {

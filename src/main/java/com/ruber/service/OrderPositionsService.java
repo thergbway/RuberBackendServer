@@ -1,7 +1,6 @@
 package com.ruber.service;
 
 import com.ruber.controller.dto.ItemReplica;
-import com.ruber.controller.dto.VkItemReplica;
 import com.ruber.dao.OrderPositionDAO;
 import com.ruber.dao.UserDAO;
 import com.ruber.dao.entity.Order;
@@ -27,133 +26,82 @@ public class OrderPositionsService {
 
     public List<ItemReplica> getItemReplicas(Integer userId, Integer orderId) {
         //fixme check whether this order belongs to authenticated user
-        List<OrderPosition> orderPositions = getOrderPositions(userId, orderId);
+        User user = userDAO.read(userId);
 
-        return orderPositions
+        Order order = user
+            .getOrders()
             .stream()
-            .filter(pos -> pos.getClass().equals(com.ruber.dao.entity.ItemReplica.class))
+            .filter(currOrder -> currOrder.getId().equals(orderId))
+            .findFirst()
+            .orElseThrow(() -> new NoSuchOrderException(orderId));
+
+        return order
+            .getOrderPositions()
+            .stream()
+            .filter(pos -> pos instanceof com.ruber.dao.entity.ItemReplica)
             .map(pos -> ItemReplica.buildFromEntity((com.ruber.dao.entity.ItemReplica) pos))
-            .collect(Collectors.toList());
-    }
-
-    public List<VkItemReplica> getVkItemReplicas(Integer userId, Integer orderId) {
-        //fixme check whether this order belongs to authenticated user
-        List<OrderPosition> orderPositions = getOrderPositions(userId, orderId);
-
-        return orderPositions
-            .stream()
-            .filter(pos -> pos.getClass().equals(com.ruber.dao.entity.VkItemReplica.class))
-            .map(pos -> VkItemReplica.buildFromEntity((com.ruber.dao.entity.VkItemReplica) pos))
             .collect(Collectors.toList());
     }
 
     public ItemReplica getItemReplica(Integer userId, Integer orderId, Integer itemId) {
         //fixme check whether this order belongs to authenticated user
-        return ItemReplica
-            .buildFromEntity((com.ruber.dao.entity.ItemReplica) getOrderPosition(userId, orderId, itemId));
-    }
+        User user = userDAO.read(userId);
 
-    public VkItemReplica getVkItemReplica(Integer userId, Integer orderId, Integer itemId) {
-        //fixme check whether this order belongs to authenticated user
-        return VkItemReplica
-            .buildFromEntity((com.ruber.dao.entity.VkItemReplica) getOrderPosition(userId, orderId, itemId));
+        Order order = user
+            .getOrders()
+            .stream()
+            .filter(currOrder -> currOrder.getId().equals(orderId))
+            .findFirst()
+            .orElseThrow(() -> new NoSuchOrderException(orderId));
+
+        return order
+            .getOrderPositions()
+            .stream()
+            .filter(position -> position.getId().equals(itemId) && position instanceof com.ruber.dao.entity.ItemReplica)
+            .map(position -> ((com.ruber.dao.entity.ItemReplica) position))
+            .map(ItemReplica::buildFromEntity)
+            .findFirst()
+            .orElseThrow(() -> new NoSuchOrderPositionException(itemId));
     }
 
     public void deleteOrderPosition(Integer userId, Integer orderId, Integer positionId) {
         User user = userDAO.read(userId);
 
-        List<Order> orders = user
+        Order order = user
             .getOrders()
             .stream()
-            .filter(order -> order.getId().equals(orderId))
-            .collect(Collectors.toList());
+            .filter(currOrder -> currOrder.getId().equals(orderId))
+            .findFirst()
+            .orElseThrow(() -> new NoSuchOrderException(orderId));
 
-        if (orders.size() == 0)
-            throw new NoSuchOrderException(orderId);
-
-        Order order = orders.get(0);
-
-        List<OrderPosition> orderPositions = order
+        OrderPosition orderPosition = order
             .getOrderPositions()
             .stream()
             .filter(position -> position.getId().equals(positionId))
-            .collect(Collectors.toList());
+            .findFirst()
+            .orElseThrow(() -> new NoSuchOrderPositionException(positionId));
 
-        if (orderPositions.size() == 0)
-            throw new NoSuchOrderPositionException(positionId);
-
-        orderPositionDAO.deleteById(positionId);
+        orderPositionDAO.deleteById(orderPosition.getId());
     }
 
     public Integer addItemReplica(Integer userId, Integer orderId, ItemReplica itemReplica) {
-        return addOrderPosition(userId, orderId, itemReplica.toEntity());
-    }
-
-    public Integer addVkItemReplica(Integer userId, Integer orderId, VkItemReplica vkItemReplica) {
-        return addOrderPosition(userId, orderId, vkItemReplica.toEntity());
-    }
-
-    private Integer addOrderPosition(Integer userId, Integer orderId, OrderPosition position) {
         User user = userDAO.read(userId);
 
-        List<Order> orders = user
+        Order order = user
             .getOrders()
             .stream()
-            .filter(order -> order.getId().equals(orderId))
-            .collect(Collectors.toList());
+            .filter(currOrder -> currOrder.getId().equals(orderId))
+            .findFirst()
+            .orElseThrow(() -> new NoSuchOrderException(orderId));
 
-        if (orders.size() == 0)
-            throw new NoSuchOrderException(orderId);
+        com.ruber.dao.entity.ItemReplica itemReplicaEntity = itemReplica.toEntity();
 
-        Order order = orders.get(0);
-
-        order.getOrderPositions().add(position);
-
-        orderPositionDAO.create(position);
-
-        return position.getId();
-    }
-
-    private OrderPosition getOrderPosition(Integer userId, Integer orderId, Integer positionId) {
-        User user = userDAO.read(userId);
-
-        List<Order> orders = user
-            .getOrders()
-            .stream()
-            .filter(order -> order.getId().equals(orderId))
-            .collect(Collectors.toList());
-
-        if (orders.size() == 0)
-            throw new NoSuchOrderException(orderId);
-
-        Order order = orders.get(0);
-
-        List<OrderPosition> orderPositions = order
+        order
             .getOrderPositions()
-            .stream()
-            .filter(position -> position.getId().equals(positionId))
-            .collect(Collectors.toList());
+            .add(itemReplicaEntity);
 
-        if (orderPositions.size() != 1)
-            throw new NoSuchOrderPositionException(positionId);
+        orderPositionDAO.create(itemReplicaEntity);
 
-        return orderPositions.get(0);
-    }
-
-    private List<OrderPosition> getOrderPositions(Integer userId, Integer orderId) {
-        User user = userDAO.read(userId);
-
-        List<Order> orders = user
-            .getOrders()
-            .stream()
-            .filter(order -> order.getId().equals(orderId))
-            .collect(Collectors.toList());
-
-        if (orders.size() == 0)
-            throw new NoSuchOrderException(orderId);
-
-        Order order = orders.get(0);
-
-        return order.getOrderPositions();
+        return itemReplicaEntity.getId();
     }
 }

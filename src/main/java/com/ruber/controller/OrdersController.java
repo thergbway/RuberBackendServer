@@ -8,8 +8,7 @@ import com.github.fge.jackson.JsonLoader;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
-import com.ruber.controller.dto.AddOrderRequest;
-import com.ruber.controller.dto.GetOrderResponse;
+import com.ruber.controller.dto.Order;
 import com.ruber.controller.dto.OrderPreview;
 import com.ruber.dao.entity.OrderStatus;
 import com.ruber.exception.InvalidRequestJsonException;
@@ -66,12 +65,12 @@ public class OrdersController {
 
     @RequestMapping(method = POST)
     public ResponseEntity<Void> addOrder(
-        @RequestBody(required = true) AddOrderRequest addOrderRequset,
+        @RequestBody(required = true) Order order,
         @ModelAttribute("user_id") Integer userId,
 
         UriComponentsBuilder builder) {
 
-        Integer orderId = ordersService.addOrder(userId, addOrderRequset);
+        Integer orderId = ordersService.addOrder(userId, order);
 
         UriComponents uriComponents = builder
             .path(PATH + "/{id}")
@@ -90,7 +89,7 @@ public class OrdersController {
     }
 
     @RequestMapping("/{id}")
-    public GetOrderResponse getOrder(
+    public Order getOrder(
         @PathVariable("id") Integer orderId,
         @ModelAttribute("user_id") Integer userId) {
 

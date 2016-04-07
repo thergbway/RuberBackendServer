@@ -2,8 +2,7 @@ package com.ruber.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Function;
-import com.ruber.controller.dto.AddOrderRequest;
-import com.ruber.controller.dto.GetOrderResponse;
+import com.ruber.controller.dto.Order;
 import com.ruber.controller.dto.OrderPreview;
 import com.ruber.dao.OrderDAO;
 import com.ruber.dao.UserDAO;
@@ -33,37 +32,32 @@ public class OrdersService {
     @Autowired
     private OrderDAO orderDAO;
 
-    public Integer addOrder(Integer userId, AddOrderRequest addOrderRequest) {
+    public Integer addOrder(Integer userId, Order order) {
         User user = userDAO.read(userId);
 
         Long createdTimestamp = TimeUtils.getCurrentTimestamp();
 
-        Order order = addOrderRequest.toOrder(createdTimestamp);
+        com.ruber.dao.entity.Order orderEntity = order.toEntity(createdTimestamp);
 
         user
             .getOrders()
-            .add(order);
+            .add(orderEntity);
 
-        orderDAO.create(order);
+        orderDAO.create(orderEntity);
 
-        return order.getId();
+        return orderEntity.getId();
     }
 
-    public GetOrderResponse getOrder(Integer userId, Integer orderId) {
+    public Order getOrder(Integer userId, Integer orderId) {
         User user = userDAO.read(userId);
 
-        List<Order> orders = user
+        return user
             .getOrders()
             .stream()
-            .filter(order -> order.getId().equals(orderId))
-            .collect(Collectors.toList());
-
-        if (orders.size() == 0)
-            throw new NoSuchOrderException(orderId);
-
-        Order order = orders.get(0);
-
-        return GetOrderResponse.buildFromOrder(order);
+            .filter(currOrder -> currOrder.getId().equals(orderId))
+            .map(Order::buildFromOrder)
+            .findFirst()
+            .orElseThrow(() -> new NoSuchOrderException(orderId));
     }
 
     public List<OrderPreview> getOrdersPreview(Integer userId) {
@@ -79,16 +73,12 @@ public class OrdersService {
     public void updateOrder(Integer userId, Integer orderId, JsonNode updateInfo) {//fixme refactor: create several methods
         User user = userDAO.read(userId);
 
-        List<Order> orders = user
+        com.ruber.dao.entity.Order order = user
             .getOrders()
             .stream()
-            .filter(order -> order.getId().equals(orderId))
-            .collect(Collectors.toList());
-
-        if (orders.size() == 0)
-            throw new NoSuchOrderException(orderId);
-
-        Order order = orders.get(0);
+            .filter(currOrder -> currOrder.getId().equals(orderId))
+            .findFirst()
+            .orElseThrow(() -> new NoSuchOrderException(orderId));
 
         Function<JsonNode, Long> getAsLongOrNull = (JsonNode longNode) ->
             longNode.isNull() ? null : longNode.asLong();
