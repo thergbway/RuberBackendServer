@@ -3,6 +3,7 @@ package com.ruber.controller.support;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -16,7 +17,7 @@ public class ErrorAndResponseWrapperAdvice implements ResponseBodyAdvice {
 
     @Override
     public boolean supports(MethodParameter returnType, Class converterType) {
-        return true;
+        return !converterType.equals(ByteArrayHttpMessageConverter.class);//support for File downloading method
     }
 
     @Override

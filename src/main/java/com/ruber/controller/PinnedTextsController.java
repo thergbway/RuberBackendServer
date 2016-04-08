@@ -12,8 +12,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
 @RequestMapping(PinnedTextsController.PATH)
@@ -23,7 +22,7 @@ public class PinnedTextsController {
     @Autowired
     private PinnedItemsService pinnedItemsService;
 
-    @RequestMapping
+    @RequestMapping(method = GET)
     public List<PinnedText> getPinnedTexts(
         @PathVariable("orderId") Integer orderId,
         @ModelAttribute("user_id") Integer userId
@@ -31,7 +30,7 @@ public class PinnedTextsController {
         return pinnedItemsService.getPinnedTexts(userId, orderId);
     }
 
-    @RequestMapping("/{textId}")
+    @RequestMapping(value = "/{textId}", method = GET)
     public PinnedText getPinnedText(
         @PathVariable("orderId") Integer orderId,
         @PathVariable("textId") Integer textId,
@@ -41,7 +40,7 @@ public class PinnedTextsController {
     }
 
     @RequestMapping(method = POST)
-    public ResponseEntity<Void> createPinnedText(
+    public ResponseEntity<PinnedText> createPinnedText(
         @PathVariable("orderId") Integer orderId,
         @RequestBody PinnedText pinnedTextInfo,
 
@@ -58,7 +57,9 @@ public class PinnedTextsController {
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(uriComponents.toUri());
 
-        return new ResponseEntity<>(headers, HttpStatus.CREATED);
+        PinnedText addedPinnedText = pinnedItemsService.getPinnedText(userId, orderId, textId);
+
+        return new ResponseEntity<>(addedPinnedText, headers, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/{textId}", method = DELETE)

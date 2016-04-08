@@ -9,8 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
 //@RequestMapping //todo add right roots later
@@ -18,7 +17,7 @@ public class UsersController {
     @Autowired
     private UsersService usersService;
 
-    @RequestMapping("/connected_groups")
+    @RequestMapping(value = "/connected_groups", method = GET)
     public Set<Integer> getConnectedVkGroupIds(@ModelAttribute("user_id") Integer userId) {
 
         return usersService.getConnectedVkGroupIds(userId);
@@ -26,14 +25,17 @@ public class UsersController {
 
     @RequestMapping(value = "connected_groups", method = POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public void addConnectedVkGroupId(
+    public Set<Integer> addConnectedVkGroupId(
         @RequestBody JsonNode requestBody,
         @ModelAttribute("user_id") Integer userId
     ) {
         if (!requestBody.has("vk_group_id") || requestBody.get("vk_group_id").isNull())
             throw new InvalidRequestJsonException("vk_group_id is missed or equals null");
-        else
+        else {
             usersService.addConnectedVkGroupId(userId, requestBody.get("vk_group_id").asInt());
+
+            return usersService.getConnectedVkGroupIds(userId);
+        }
     }
 
     @RequestMapping(value = "/connected_groups/{group_id}", method = DELETE)

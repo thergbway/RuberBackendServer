@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.annotation.PostConstruct;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
 @Controller
 public class HomeController {
     private static AtomicInteger nextId = new AtomicInteger(1);
@@ -16,7 +18,7 @@ public class HomeController {
     @Autowired
     private FillDatabaseService fillDatabaseService;
 
-    @RequestMapping({"/", "/home"})
+    @RequestMapping(value = {"/", "/home"}, method = GET)
     public String getHomePage(Model model) {
         model.addAttribute("id", nextId.getAndIncrement());
 

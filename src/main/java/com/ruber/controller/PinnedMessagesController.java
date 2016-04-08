@@ -12,8 +12,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
 @RequestMapping(PinnedMessagesController.PATH)
@@ -23,7 +22,7 @@ public class PinnedMessagesController {
     @Autowired
     private PinnedItemsService pinnedItemsService;
 
-    @RequestMapping
+    @RequestMapping(method = GET)
     public List<PinnedMessage> getPinnedMessages(
         @PathVariable("orderId") Integer orderId,
         @ModelAttribute("user_id") Integer userId
@@ -31,7 +30,7 @@ public class PinnedMessagesController {
         return pinnedItemsService.getPinnedMessages(userId, orderId);
     }
 
-    @RequestMapping("/{messageId}")
+    @RequestMapping(value = "/{messageId}", method = GET)
     public PinnedMessage getPinnedMessage(
         @PathVariable("orderId") Integer orderId,
         @PathVariable("messageId") Integer messageId,
@@ -41,7 +40,7 @@ public class PinnedMessagesController {
     }
 
     @RequestMapping(method = POST)
-    public ResponseEntity<Void> createPinnedMessage(
+    public ResponseEntity<PinnedMessage> createPinnedMessage(
         @PathVariable("orderId") Integer orderId,
         @RequestBody PinnedMessage pinnedMessageInfo,
 
@@ -58,7 +57,9 @@ public class PinnedMessagesController {
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(uriComponents.toUri());
 
-        return new ResponseEntity<>(headers, HttpStatus.CREATED);
+        PinnedMessage addedPinnedMessage = pinnedItemsService.getPinnedMessage(userId, orderId, messageId);
+
+        return new ResponseEntity<>(addedPinnedMessage, headers, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/{messageId}", method = DELETE)

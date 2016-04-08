@@ -20,8 +20,7 @@ import java.beans.PropertyEditorSupport;
 import java.io.IOException;
 import java.util.List;
 
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
 @RequestMapping(PinnedFilesController.PATH)
@@ -46,7 +45,7 @@ public class PinnedFilesController {
             });
     }
 
-    @RequestMapping
+    @RequestMapping(method = GET)
     public List<PinnedFile> getPinnedFiles(
         @PathVariable("orderId") Integer orderId,
         @ModelAttribute("user_id") Integer userId
@@ -54,7 +53,7 @@ public class PinnedFilesController {
         return pinnedItemsService.getPinnedFiles(userId, orderId);
     }
 
-    @RequestMapping("/{fileId}")
+    @RequestMapping(value = "/{fileId}", method = GET)
     public PinnedFile getPinnedFile(
         @PathVariable("orderId") Integer orderId,
         @PathVariable("fileId") Integer fileId,
@@ -74,7 +73,7 @@ public class PinnedFilesController {
     }
 
     @RequestMapping(method = POST)
-    public ResponseEntity<Void> addPinnedFile(
+    public ResponseEntity<PinnedFile> addPinnedFile(
         @PathVariable("orderId") Integer orderId,
         @RequestParam("file_info") AddPinnedFileRequestPart fileInfo,
 
@@ -85,23 +84,25 @@ public class PinnedFilesController {
         UriComponentsBuilder builder
     ) {
         try {
-            Integer pinnedFileId = pinnedItemsService
+            Integer fileId = pinnedItemsService
                 .addPinnedFile(userId, orderId, fileInfo, fileContent.getBytes(), fileContent.getOriginalFilename());
 
             UriComponents uriComponents = builder
                 .path(PATH + "/{pinnedFileId}")
-                .buildAndExpand(orderId, pinnedFileId);
+                .buildAndExpand(orderId, fileId);
 
             HttpHeaders headers = new HttpHeaders();
             headers.setLocation(uriComponents.toUri());
 
-            return new ResponseEntity<>(headers, HttpStatus.CREATED);
+            PinnedFile addedPinnedFile = pinnedItemsService.getPinnedFile(userId, orderId, fileId);
+
+            return new ResponseEntity<>(addedPinnedFile, headers, HttpStatus.CREATED);
         } catch (IOException e) {
             throw new MultipartFileIOException(e);
         }
     }
 
-    @RequestMapping("/{fileId}/content")
+    @RequestMapping(value = "/{fileId}/content", method = GET)
     public ResponseEntity<byte[]> getPinnedFileContent(
         @PathVariable("orderId") Integer orderId,
         @PathVariable("fileId") Integer fileId,

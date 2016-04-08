@@ -26,8 +26,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.annotation.PostConstruct;
 import java.util.List;
 
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
 @RequestMapping(OrdersController.PATH)
@@ -58,7 +57,7 @@ public class OrdersController {
     }
 
     @RequestMapping(method = POST)
-    public ResponseEntity<Void> addOrder(
+    public ResponseEntity<Order> addOrder(
         @RequestBody(required = true) Order order,
         @ModelAttribute("user_id") Integer userId,
 
@@ -73,16 +72,18 @@ public class OrdersController {
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(uriComponents.toUri());
 
-        return new ResponseEntity<>(headers, HttpStatus.CREATED);
+        Order addedOrder = ordersService.getOrder(userId, orderId);
+
+        return new ResponseEntity<>(addedOrder, headers, HttpStatus.CREATED);
     }
 
 
-    @RequestMapping
+    @RequestMapping(method = GET)
     public List<OrderPreview> getOrdersPreview(@ModelAttribute("user_id") Integer userId) {
         return ordersService.getOrdersPreview(userId);
     }
 
-    @RequestMapping("/{id}")
+    @RequestMapping(value = "/{id}", method = GET)
     public Order getOrder(
         @PathVariable("id") Integer orderId,
         @ModelAttribute("user_id") Integer userId) {
@@ -92,7 +93,7 @@ public class OrdersController {
 
     @RequestMapping(value = "/{id}", method = PUT)
     @ResponseStatus(HttpStatus.OK)
-    public void updateOrder(
+    public Order updateOrder(
         @PathVariable("id") Integer orderId,
         @RequestBody(required = true) JsonNode updateInfo,
         @ModelAttribute("user_id") Integer userId
@@ -100,6 +101,8 @@ public class OrdersController {
         validateUpdateOrderJsonNode(updateInfo);
 
         ordersService.updateOrder(userId, orderId, updateInfo);
+
+        return ordersService.getOrder(userId, orderId);
     }
 
     private void validateUpdateOrderJsonNode(JsonNode node) {

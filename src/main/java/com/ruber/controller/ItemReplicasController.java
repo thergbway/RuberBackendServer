@@ -12,8 +12,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
 @RequestMapping(ItemReplicasController.PATH)
@@ -23,7 +22,7 @@ public class ItemReplicasController {
     @Autowired
     private OrderPositionsService orderPositionsService;
 
-    @RequestMapping
+    @RequestMapping(method = GET)
     public List<ItemReplica> getItemReplicas(
         @ModelAttribute("user_id") Integer userId,
         @PathVariable("orderId") Integer orderId
@@ -31,7 +30,7 @@ public class ItemReplicasController {
         return orderPositionsService.getItemReplicas(userId, orderId);
     }
 
-    @RequestMapping("/{itemId}")
+    @RequestMapping(value = "/{itemId}", method = GET)
     public ItemReplica getItemReplica(
         @ModelAttribute("user_id") Integer userId,
         @PathVariable("orderId") Integer orderId,
@@ -51,7 +50,7 @@ public class ItemReplicasController {
     }
 
     @RequestMapping(method = POST)
-    public ResponseEntity<Void> addItemReplica(
+    public ResponseEntity<ItemReplica> addItemReplica(
         @ModelAttribute("user_id") Integer userId,
         @PathVariable("orderId") Integer orderId,
         @RequestBody(required = true) ItemReplica itemReplica,
@@ -67,6 +66,8 @@ public class ItemReplicasController {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(uriComponents.toUri());
 
-        return new ResponseEntity<>(httpHeaders, HttpStatus.CREATED);
+        ItemReplica addedItemReplica = orderPositionsService.getItemReplica(userId, orderId, itemId);
+
+        return new ResponseEntity<>(addedItemReplica, httpHeaders, HttpStatus.CREATED);
     }
 }
