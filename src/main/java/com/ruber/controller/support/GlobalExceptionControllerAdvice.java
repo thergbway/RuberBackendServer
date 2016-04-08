@@ -1,7 +1,5 @@
 package com.ruber.controller.support;
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.ruber.exception.BadRequestBackendException;
 import com.ruber.exception.ErrorCodes;
 import com.ruber.exception.ForbiddenBackendException;
@@ -18,51 +16,35 @@ import static org.springframework.http.HttpStatus.*;
 public class GlobalExceptionControllerAdvice {
     @ExceptionHandler(UnauthorisedBackendException.class)
     @ResponseBody
-    public ObjectNode handleUnauthorisedBackendExceptions(UnauthorisedBackendException ex, HttpServletResponse response) {
-        ObjectNode node = JsonNodeFactory.instance.objectNode();
-        node.put("code", ex.getCode());
-        node.put("message", ex.getMessage());
-
+    public ExceptionWrapper handleUnauthorisedBackendExceptions(UnauthorisedBackendException ex, HttpServletResponse response) {
         response.setStatus(UNAUTHORIZED.value());
 
-        return node;
+        return new ExceptionWrapper(ex.getCode(), ex.getMessage());
     }
 
     @ExceptionHandler(BadRequestBackendException.class)
     @ResponseBody
-    public ObjectNode handleBadRequestBackendExceptions(BadRequestBackendException ex, HttpServletResponse response) {
-        ObjectNode node = JsonNodeFactory.instance.objectNode();
-        node.put("code", ex.getCode());
-        node.put("message", ex.getMessage());
-
+    public ExceptionWrapper handleBadRequestBackendExceptions(BadRequestBackendException ex, HttpServletResponse response) {
         response.setStatus(BAD_REQUEST.value());
 
-        return node;
+        return new ExceptionWrapper(ex.getCode(), ex.getMessage());
     }
 
     @ExceptionHandler(ForbiddenBackendException.class)
     @ResponseBody
-    public ObjectNode handleForbiddenBackendExceptions(ForbiddenBackendException ex, HttpServletResponse response) {
-        ObjectNode node = JsonNodeFactory.instance.objectNode();
-        node.put("code", ex.getCode());
-        node.put("message", ex.getMessage());
-
+    public ExceptionWrapper handleForbiddenBackendExceptions(ForbiddenBackendException ex, HttpServletResponse response) {
         response.setStatus(FORBIDDEN.value());
 
-        return node;
+        return new ExceptionWrapper(ex.getCode(), ex.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
     @ResponseBody
-    public ObjectNode handleForbiddenBackendExceptions(Exception ex, HttpServletResponse response) {
+    public ExceptionWrapper handleForbiddenBackendExceptions(Exception ex, HttpServletResponse response) {
         ex.printStackTrace();
-
-        ObjectNode node = JsonNodeFactory.instance.objectNode();
-        node.put("code", ErrorCodes.INTERNAL_ERROR.getCode());
-        node.put("message", ex.getMessage());
 
         response.setStatus(INTERNAL_SERVER_ERROR.value());
 
-        return node;
+        return new ExceptionWrapper(ErrorCodes.INTERNAL_ERROR.getCode(), ex.getMessage());
     }
 }
