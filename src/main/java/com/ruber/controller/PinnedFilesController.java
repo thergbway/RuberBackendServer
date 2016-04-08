@@ -16,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.servlet.http.HttpServletRequest;
 import java.beans.PropertyEditorSupport;
 import java.io.IOException;
 import java.util.List;
@@ -46,12 +45,6 @@ public class PinnedFilesController {
                 }
             });
     }
-
-    @ModelAttribute("user_id")
-    public Integer getUserId(HttpServletRequest request) {//fixme this method is presented in about all controllers. Use hierarchy for writing it only once
-        return ((Integer) request.getAttribute("user_id"));
-    }
-
 
     @RequestMapping
     public List<PinnedFile> getPinnedFiles(

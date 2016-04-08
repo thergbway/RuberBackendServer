@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Set;
 
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
@@ -18,11 +17,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public class UsersController {
     @Autowired
     private UsersService usersService;
-
-    @ModelAttribute("user_id")
-    public Integer getUserId(HttpServletRequest request) {//fixme this method is presented in about all controllers. Use hierarchy for writing it only once
-        return ((Integer) request.getAttribute("user_id"));
-    }
 
     @RequestMapping("/connected_groups")
     public Set<Integer> getConnectedVkGroupIds(@ModelAttribute("user_id") Integer userId) {

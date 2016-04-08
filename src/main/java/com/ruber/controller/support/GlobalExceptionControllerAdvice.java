@@ -1,4 +1,4 @@
-package com.ruber.controller;
+package com.ruber.controller.support;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;

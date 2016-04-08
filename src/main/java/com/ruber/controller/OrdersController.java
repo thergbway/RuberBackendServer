@@ -24,7 +24,6 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -56,11 +55,6 @@ public class OrdersController {
 
         orderUpdateSchemaAsJsonNode = jsonNode;
         orderUpdateSchema = JsonSchemaFactory.byDefault().getJsonSchema(orderUpdateSchemaAsJsonNode);
-    }
-
-    @ModelAttribute("user_id")
-    public Integer getUserId(HttpServletRequest request) {//fixme this method is presented in about all controllers. Use hierarchy for writing it only once
-        return ((Integer) request.getAttribute("user_id"));
     }
 
     @RequestMapping(method = POST)

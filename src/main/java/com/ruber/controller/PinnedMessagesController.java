@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
@@ -23,11 +22,6 @@ public class PinnedMessagesController {
 
     @Autowired
     private PinnedItemsService pinnedItemsService;
-
-    @ModelAttribute("user_id")
-    public Integer getUserId(HttpServletRequest request) {//fixme this method is presented in about all controllers. Use hierarchy for writing it only once
-        return ((Integer) request.getAttribute("user_id"));
-    }
 
     @RequestMapping
     public List<PinnedMessage> getPinnedMessages(

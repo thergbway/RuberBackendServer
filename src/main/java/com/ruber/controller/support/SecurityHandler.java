@@ -1,4 +1,4 @@
-package com.ruber.controller;
+package com.ruber.controller.support;
 
 import com.ruber.dao.UserDAO;
 import com.ruber.exception.InvalidAccessTokenException;
