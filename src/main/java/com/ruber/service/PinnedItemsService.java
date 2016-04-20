@@ -9,6 +9,7 @@ import com.ruber.dao.UserDAO;
 import com.ruber.dao.entity.Order;
 import com.ruber.dao.entity.PinnedItem;
 import com.ruber.dao.entity.User;
+import com.ruber.exception.NoSuchMarketException;
 import com.ruber.exception.NoSuchOrderException;
 import com.ruber.exception.NoSuchPinnedItemException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,34 +31,41 @@ public class PinnedItemsService {
     @Autowired
     private PinnedItemDAO pinnedItemDAO;
 
-    public List<PinnedMessage> getPinnedMessages(Integer userId, Integer orderId) {
-        return getPinnedItems(userId, orderId)
+    @Autowired
+    private MarketService marketService;
+
+    public List<PinnedMessage> getPinnedMessages(Integer userId, Integer marketVkId, Integer orderId) {
+        return getPinnedItems(userId, marketVkId, orderId)
             .stream()
             .filter(pinnedItem -> pinnedItem.getClass().equals(com.ruber.dao.entity.PinnedMessage.class))
             .map(pinnedItem -> PinnedMessage.buildFromEntity(((com.ruber.dao.entity.PinnedMessage) pinnedItem)))
             .collect(Collectors.toList());
     }
 
-    public List<PinnedText> getPinnedTexts(Integer userId, Integer orderId) {
-        return getPinnedItems(userId, orderId)
+    public List<PinnedText> getPinnedTexts(Integer userId, Integer marketVkId, Integer orderId) {
+        return getPinnedItems(userId, marketVkId, orderId)
             .stream()
             .filter(pinnedItem -> pinnedItem.getClass().equals(com.ruber.dao.entity.PinnedText.class))
             .map(pinnedItem -> PinnedText.buildFromEntity(((com.ruber.dao.entity.PinnedText) pinnedItem)))
             .collect(Collectors.toList());
     }
 
-    public List<PinnedFile> getPinnedFiles(Integer userId, Integer orderId) {
-        return getPinnedItems(userId, orderId)
+    public List<PinnedFile> getPinnedFiles(Integer userId, Integer marketVkId, Integer orderId) {
+        return getPinnedItems(userId, marketVkId, orderId)
             .stream()
             .filter(pinnedItem -> pinnedItem.getClass().equals(com.ruber.dao.entity.PinnedFile.class))
             .map(pinnedItem -> PinnedFile.buildFromEntity(((com.ruber.dao.entity.PinnedFile) pinnedItem)))
             .collect(Collectors.toList());
     }
 
-    private List<PinnedItem> getPinnedItems(Integer userId, Integer orderId) {
+    private List<PinnedItem> getPinnedItems(Integer userId, Integer marketVkId, Integer orderId) {
         User user = userDAO.read(userId);
 
-        List<Order> orders = user
+        if (!user.getConnectedMarkets().contains(marketService.getMarketByVkGroupId(marketVkId)))
+            throw new NoSuchMarketException(marketVkId, user.getVkId());
+
+        List<Order> orders = marketService
+            .getMarketByVkGroupId(marketVkId)
             .getOrders()
             .stream()
             .filter(order -> order.getId().equals(orderId))
@@ -72,25 +80,29 @@ public class PinnedItemsService {
             .getPinnedItems();
     }
 
-    public PinnedMessage getPinnedMessage(Integer userId, Integer orderId, Integer messageId) {
+    public PinnedMessage getPinnedMessage(Integer userId, Integer marketVkId, Integer orderId, Integer messageId) {
         return PinnedMessage
-            .buildFromEntity((com.ruber.dao.entity.PinnedMessage) getPinnedItem(userId, orderId, messageId));
+            .buildFromEntity((com.ruber.dao.entity.PinnedMessage) getPinnedItem(userId, marketVkId, orderId, messageId));
     }
 
-    public PinnedText getPinnedText(Integer userId, Integer orderId, Integer textId) {
+    public PinnedText getPinnedText(Integer userId, Integer marketVkId, Integer orderId, Integer textId) {
         return PinnedText
-            .buildFromEntity((com.ruber.dao.entity.PinnedText) getPinnedItem(userId, orderId, textId));
+            .buildFromEntity((com.ruber.dao.entity.PinnedText) getPinnedItem(userId, marketVkId, orderId, textId));
     }
 
-    public PinnedFile getPinnedFile(Integer userId, Integer orderId, Integer fileId) {
+    public PinnedFile getPinnedFile(Integer userId, Integer marketVkId, Integer orderId, Integer fileId) {
         return PinnedFile
-            .buildFromEntity((com.ruber.dao.entity.PinnedFile) getPinnedItem(userId, orderId, fileId));
+            .buildFromEntity((com.ruber.dao.entity.PinnedFile) getPinnedItem(userId, marketVkId, orderId, fileId));
     }
 
-    private PinnedItem getPinnedItem(Integer userId, Integer orderId, Integer itemId) {
+    private PinnedItem getPinnedItem(Integer userId, Integer marketVkId, Integer orderId, Integer itemId) {
         User user = userDAO.read(userId);
 
-        List<Order> orders = user
+        if (!user.getConnectedMarkets().contains(marketService.getMarketByVkGroupId(marketVkId)))
+            throw new NoSuchMarketException(marketVkId, user.getVkId());
+
+        List<Order> orders = marketService
+            .getMarketByVkGroupId(marketVkId)
             .getOrders()
             .stream()
             .filter(order -> order.getId().equals(orderId))
@@ -113,39 +125,43 @@ public class PinnedItemsService {
             throw new NoSuchPinnedItemException(itemId);
     }
 
-    public byte[] getPinnedFileContent(Integer userId, Integer orderId, Integer fileId) {
+    public byte[] getPinnedFileContent(Integer userId, Integer marketVkId, Integer orderId, Integer fileId) {
         com.ruber.dao.entity.PinnedFile pinnedFile
-            = (com.ruber.dao.entity.PinnedFile) getPinnedItem(userId, orderId, fileId);
+            = (com.ruber.dao.entity.PinnedFile) getPinnedItem(userId, marketVkId, orderId, fileId);
 
         return pinnedFile.getContent();
     }
 
-    public String getPinnedFileFilename(Integer userId, Integer orderId, Integer fileId) {
+    public String getPinnedFileFilename(Integer userId, Integer marketVkId, Integer orderId, Integer fileId) {
         com.ruber.dao.entity.PinnedFile pinnedFile
-            = (com.ruber.dao.entity.PinnedFile) getPinnedItem(userId, orderId, fileId);
+            = (com.ruber.dao.entity.PinnedFile) getPinnedItem(userId, marketVkId, orderId, fileId);
 
         return pinnedFile.getFileName();
     }
 
-    public Integer addPinnedMessage(Integer userId, Integer orderId, PinnedMessage pinnedMessageInfo) {
-        return addPinnedItem(userId, orderId, pinnedMessageInfo.toEntity(getCurrentTimestamp()));
+    public Integer addPinnedMessage(Integer userId, Integer marketVkId, Integer orderId, PinnedMessage pinnedMessageInfo) {
+        return addPinnedItem(userId, marketVkId, orderId, pinnedMessageInfo.toEntity(getCurrentTimestamp()));
     }
 
-    public Integer addPinnedText(Integer userId, Integer orderId, PinnedText pinnedTextInfo) {
-        return addPinnedItem(userId, orderId, pinnedTextInfo.toEntity(getCurrentTimestamp()));
+    public Integer addPinnedText(Integer userId, Integer marketVkId, Integer orderId, PinnedText pinnedTextInfo) {
+        return addPinnedItem(userId, marketVkId, orderId, pinnedTextInfo.toEntity(getCurrentTimestamp()));
     }
 
-    public Integer addPinnedFile(Integer userId, Integer orderId, AddPinnedFileRequestPart fileInfo,
+    public Integer addPinnedFile(Integer userId, Integer marketVkId, Integer orderId, AddPinnedFileRequestPart fileInfo,
                                  byte[] content, String fileName) {
         com.ruber.dao.entity.PinnedFile pinnedFile =
             new com.ruber.dao.entity.PinnedFile(null, fileInfo.getPosition(), getCurrentTimestamp(), content, fileName);
-        return addPinnedItem(userId, orderId, pinnedFile);
+        return addPinnedItem(userId, marketVkId, orderId, pinnedFile);
     }
 
-    private Integer addPinnedItem(Integer userId, Integer orderId, PinnedItem pinnedItem) {
+    private Integer addPinnedItem(Integer userId, Integer marketVkId, Integer orderId, PinnedItem pinnedItem) {
         User user = userDAO.read(userId);
 
-        List<Order> orders = user
+        if (!user.getConnectedMarkets().contains(marketService.getMarketByVkGroupId(marketVkId)))
+            throw new NoSuchMarketException(marketVkId, user.getVkId());
+
+        List<Order> orders = marketService
+            .getMarketByVkGroupId(marketVkId)
             .getOrders()
             .stream()
             .filter(order -> order.getId().equals(orderId))
@@ -165,10 +181,14 @@ public class PinnedItemsService {
         return pinnedItem.getId();
     }
 
-    public void deletePinnedItem(Integer userId, Integer orderId, Integer itemId) {
+    public void deletePinnedItem(Integer userId, Integer marketVkId, Integer orderId, Integer itemId) {
         User user = userDAO.read(userId);
 
-        List<Order> orders = user
+        if (!user.getConnectedMarkets().contains(marketService.getMarketByVkGroupId(marketVkId)))
+            throw new NoSuchMarketException(marketVkId, user.getVkId());
+
+        List<Order> orders = marketService
+            .getMarketByVkGroupId(marketVkId)
             .getOrders()
             .stream()
             .filter(order -> order.getId().equals(orderId))

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Repository
 public class VkTokenDAOImpl implements VkTokenDAO {
@@ -14,10 +15,12 @@ public class VkTokenDAOImpl implements VkTokenDAO {
 
     @Override
     public VkToken getByValue(String tokenValue) {
-        return ((VkToken) entityManager
-            .createNamedQuery("VkToken.getByValue")
+        List<VkToken> vkTokens = entityManager
+            .createNamedQuery("VkToken.getByValue", VkToken.class)
             .setParameter("value", tokenValue)
-            .getSingleResult());
+            .getResultList();
+
+        return vkTokens.size() == 1 ? vkTokens.get(0) : null;
     }
 
     @Override

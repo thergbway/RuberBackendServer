@@ -1,8 +1,9 @@
 package com.ruber.dao.entity;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
@@ -10,7 +11,8 @@ import java.util.List;
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.GenerationType.SEQUENCE;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 
@@ -20,6 +22,10 @@ public class Order {
     @Id
     @GeneratedValue(strategy = SEQUENCE)
     private Integer id;
+
+    @OneToOne(cascade = ALL)
+    @JoinColumn(name = "creator_id")
+    private User creator;
 
     @Column(nullable = false)
     private String title;

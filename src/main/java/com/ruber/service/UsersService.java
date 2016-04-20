@@ -2,6 +2,7 @@ package com.ruber.service;
 
 import com.ruber.dao.UserDAO;
 import com.ruber.dao.VkTokenDAO;
+import com.ruber.dao.entity.Market;
 import com.ruber.dao.entity.RuberToken;
 import com.ruber.dao.entity.User;
 import com.ruber.dao.entity.VkToken;
@@ -10,8 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional//TODO
@@ -22,13 +23,16 @@ public class UsersService {
     @Autowired
     private VkTokenDAO vkTokenDAO;
 
+    @Autowired
+    private MarketService marketService;
+
     public boolean isUserExist(Integer vkId) {
         return userDAO.getByVkId(vkId) != null;
     }
 
     public void addUser(Integer vkId, String vkToken, String ruberToken) {
         User user = new User(null, vkId, Collections.emptySet(), Collections.singletonList(new RuberToken(null, ruberToken)),
-            Collections.singletonList(new VkToken(null, vkToken)), Collections.emptyList());
+            Collections.singletonList(new VkToken(null, vkToken)));
 
         userDAO.create(user);
     }
@@ -47,18 +51,25 @@ public class UsersService {
     public Set<Integer> getConnectedVkGroupIds(Integer userId) {
         User user = userDAO.read(userId);
 
-        return new HashSet<>(user.getConnectedVkGroupIds());//fixme why should we copy all elements(tip: lazy init and transactions)?
+        return user
+            .getConnectedMarkets()
+            .stream()
+            .map(Market::getVkId)
+            .collect(Collectors.toSet());
     }
 
     public void addConnectedVkGroupId(Integer userId, Integer vkGroupId) {
         User user = userDAO.read(userId);
 
-        user.getConnectedVkGroupIds().add(vkGroupId);
+        if (!marketService.isMarketExist(vkGroupId))
+            marketService.addMarket(vkGroupId);
+
+        user.getConnectedMarkets().add(marketService.getMarketByVkGroupId(vkGroupId));
     }
 
     public void deleteConnectedVkGroupId(Integer userId, Integer vkGroupId) {
         User user = userDAO.read(userId);
 
-        user.getConnectedVkGroupIds().remove(vkGroupId);
+        user.getConnectedMarkets().remove(marketService.getMarketByVkGroupId(vkGroupId));
     }
 }

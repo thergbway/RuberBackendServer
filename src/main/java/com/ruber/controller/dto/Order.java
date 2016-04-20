@@ -2,6 +2,7 @@ package com.ruber.controller.dto;
 
 import com.ruber.dao.entity.OrderStatus;
 import com.ruber.dao.entity.PinnedItem;
+import com.ruber.dao.entity.User;
 import lombok.Data;
 
 import java.util.Collections;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 @Data
 public class Order {
     private Integer id;
+    private Integer creator_vk_id;
     private String title;
     private String description;
     private OrderStatus status;
@@ -37,6 +39,7 @@ public class Order {
         Order response = new Order();
 
         response.setId(order.getId());
+        response.setCreator_vk_id(order.getCreator().getVkId());
         response.setTitle(order.getTitle());
         response.setDescription(order.getDescription());
         response.setStatus(order.getStatus());
@@ -55,7 +58,7 @@ public class Order {
         return response;
     }
 
-    public com.ruber.dao.entity.Order toEntity(Long createdTimestamp) {
+    public com.ruber.dao.entity.Order toEntity(Long createdTimestamp, User creator) {
         List<com.ruber.dao.entity.ItemReplica> itemReplicas = item_replicas
             .stream()
             .map(ItemReplica::toEntity)
@@ -63,6 +66,7 @@ public class Order {
 
         return new com.ruber.dao.entity.Order(
             null,
+            creator,
             title,
             description,
             status,

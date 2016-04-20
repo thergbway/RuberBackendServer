@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashSet;
 
 import static com.ruber.dao.entity.OrderStatus.PAID;
 import static com.ruber.dao.entity.OrderStatus.WAITING;
@@ -63,15 +63,20 @@ public class FillDatabaseService {
             ItemReplica ir1 = new ItemReplica(null, "itemReplica1", "itemReplica1 description", new URL("http://google.com/pic2.png"), new BigDecimal("100.54"), 2);
             ItemReplica ir2 = new ItemReplica(null, "itemReplica2", "itemReplica2 description", new URL("http://google.com/pic3.png"), new BigDecimal("400.12"), 11);
 
-            VkItemReplica vir1 = new VkItemReplica(null, "vkItem1", "vkItem1 desc", new URL("http://google.com/pic4.gif"), new BigDecimal("10.00"), 1, 77889900, 55556666);
-            VkItemReplica vir2 = new VkItemReplica(null, "vkItem2", "vkItem2 desc", new URL("http://google.com/pic5.gif"), new BigDecimal("700.00"), 3, 77889900, 77778888);
-            VkItemReplica vir3 = new VkItemReplica(null, "vkItem3", "vkItem3 desc", new URL("http://google.com/pic6.gif"), new BigDecimal("25.05"), 4, 77889900, 22223333);
+            VkItemReplica vir1 = new VkItemReplica(null, "vkItem1", "vkItem1 desc", new URL("http://google.com/pic4.gif"), new BigDecimal("10.00"), 1, 77889900);
+            VkItemReplica vir2 = new VkItemReplica(null, "vkItem2", "vkItem2 desc", new URL("http://google.com/pic5.gif"), new BigDecimal("700.00"), 3, 77889900);
+            VkItemReplica vir3 = new VkItemReplica(null, "vkItem3", "vkItem3 desc", new URL("http://google.com/pic6.gif"), new BigDecimal("25.05"), 4, 77889900);
 
-            Order o1 = new Order(null, "order1", "order1 desc", WAITING, 67890L, 10067890L, d1, sh1, Arrays.asList(ir1, vir1, vir2), c1, Arrays.asList(m1, m2, m3, t1, t2, f4, f5));
-            Order o2 = new Order(null, "order2", "", PAID, 67890L, null, null, null, Arrays.asList(ir2, vir3), c1, Arrays.asList(t3, f6));
+            User user = new User(null, 12345000, new HashSet<>(), Arrays.asList(r1, r2), Arrays.asList(v1, v2, v3));
 
-            User user = new User(null, 12345000, Collections.emptySet(), Arrays.asList(r1, r2), Arrays.asList(v1, v2, v3), Arrays.asList(o1, o2));
+            Order o1 = new Order(null, user, "order1", "order1 desc", WAITING, 67890L, 10067890L, d1, sh1, Arrays.asList(ir1, vir1, vir2), c1, Arrays.asList(m1, m2, m3, t1, t2, f4, f5));
+            Order o2 = new Order(null, user, "order2", "", PAID, 67890L, null, null, null, Arrays.asList(ir2, vir3), c1, Arrays.asList(t3, f6));
 
+            Market market = new Market(null, 13, Arrays.asList(o1, o2));
+
+            user.getConnectedMarkets().add(market);
+
+            entityManager.persist(market);
             entityManager.persist(user);
 
             System.out.println(user.getId());

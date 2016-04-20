@@ -1,8 +1,6 @@
 package com.ruber.dao.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
@@ -11,7 +9,9 @@ import java.util.Set;
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.GenerationType.SEQUENCE;
 
-@Data
+@Setter
+@Getter
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 
@@ -30,11 +30,13 @@ public class User {
     @Column(name = "vk_id", nullable = false, unique = true)
     private Integer vkId;
 
-    @ElementCollection
-    @CollectionTable(name = "connected_vk_groups")
-    @Column(name = "vk_group_id", nullable = false)
-    @JoinColumn(name = "user_id")
-    private Set<Integer> connectedVkGroupIds;
+    @ManyToMany(cascade = ALL)
+    @JoinTable(
+        name = "users_to_markets",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "market_id")
+    )
+    private Set<Market> connectedMarkets;
 
     @OneToMany(cascade = ALL)
     @JoinColumn(name = "user_id", nullable = false)
@@ -43,8 +45,4 @@ public class User {
     @OneToMany(cascade = ALL)
     @JoinColumn(name = "user_id", nullable = false)
     private List<VkToken> vkTokens;
-
-    @OneToMany(cascade = ALL)
-    @JoinColumn(name = "user_id", nullable = false)
-    private List<Order> orders;
 }

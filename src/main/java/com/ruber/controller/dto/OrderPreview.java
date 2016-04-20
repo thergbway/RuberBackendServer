@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 public class OrderPreview {
     private Integer id;
+    private Integer creator_vk_id;
     private String title;
     private String description;
     private OrderStatus status;
@@ -20,6 +21,7 @@ public class OrderPreview {
         OrderPreview orderPreview = new OrderPreview();
 
         orderPreview.setId(entity.getId());
+        orderPreview.setCreator_vk_id(entity.getCreator().getVkId());
         orderPreview.setTitle(entity.getTitle());
         orderPreview.setDescription(entity.getDescription());
         orderPreview.setStatus(entity.getStatus());

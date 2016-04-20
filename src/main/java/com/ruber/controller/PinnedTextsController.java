@@ -17,7 +17,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @RestController
 @RequestMapping(PinnedTextsController.PATH)
 public class PinnedTextsController {
-    public static final String PATH = "/orders/{orderId}/pinned_texts";
+    public static final String PATH = "/markets/{market_vk_id}/orders/{orderId}/pinned_texts";
 
     @Autowired
     private PinnedItemsService pinnedItemsService;
@@ -25,18 +25,20 @@ public class PinnedTextsController {
     @RequestMapping(method = GET)
     public List<PinnedText> getPinnedTexts(
         @PathVariable("orderId") Integer orderId,
-        @ModelAttribute("user_id") Integer userId
+        @ModelAttribute("user_id") Integer userId,
+        @PathVariable("market_vk_id") Integer marketVkId
     ) {
-        return pinnedItemsService.getPinnedTexts(userId, orderId);
+        return pinnedItemsService.getPinnedTexts(userId, marketVkId, orderId);
     }
 
     @RequestMapping(value = "/{textId}", method = GET)
     public PinnedText getPinnedText(
         @PathVariable("orderId") Integer orderId,
         @PathVariable("textId") Integer textId,
-        @ModelAttribute("user_id") Integer userId
+        @ModelAttribute("user_id") Integer userId,
+        @PathVariable("market_vk_id") Integer marketVkId
     ) {
-        return pinnedItemsService.getPinnedText(userId, orderId, textId);
+        return pinnedItemsService.getPinnedText(userId, marketVkId, orderId, textId);
     }
 
     @RequestMapping(method = POST)
@@ -45,19 +47,20 @@ public class PinnedTextsController {
         @RequestBody PinnedText pinnedTextInfo,
 
         @ModelAttribute("user_id") Integer userId,
+        @PathVariable("market_vk_id") Integer marketVkId,
 
         UriComponentsBuilder builder
     ) {
-        Integer textId = pinnedItemsService.addPinnedText(userId, orderId, pinnedTextInfo);
+        Integer textId = pinnedItemsService.addPinnedText(userId, marketVkId, orderId, pinnedTextInfo);
 
         UriComponents uriComponents = builder
             .path(PATH + "/{textId}")
-            .buildAndExpand(orderId, textId);
+            .buildAndExpand(marketVkId, orderId, textId);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(uriComponents.toUri());
 
-        PinnedText addedPinnedText = pinnedItemsService.getPinnedText(userId, orderId, textId);
+        PinnedText addedPinnedText = pinnedItemsService.getPinnedText(userId, marketVkId, orderId, textId);
 
         return new ResponseEntity<>(addedPinnedText, headers, HttpStatus.CREATED);
     }
@@ -67,8 +70,9 @@ public class PinnedTextsController {
     public void deletePinnedText(
         @PathVariable("orderId") Integer orderId,
         @PathVariable("textId") Integer textId,
-        @ModelAttribute("user_id") Integer userId
+        @ModelAttribute("user_id") Integer userId,
+        @PathVariable("market_vk_id") Integer marketVkId
     ) {
-        pinnedItemsService.deletePinnedItem(userId, orderId, textId);
+        pinnedItemsService.deletePinnedItem(userId, marketVkId, orderId, textId);
     }
 }

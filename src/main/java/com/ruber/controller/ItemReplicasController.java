@@ -17,7 +17,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @RestController
 @RequestMapping(ItemReplicasController.PATH)
 public class ItemReplicasController {
-    public static final String PATH = "/orders/{orderId}/item_replicas";
+    public static final String PATH = "/markets/{market_vk_id}/orders/{orderId}/item_replicas";
 
     @Autowired
     private OrderPositionsService orderPositionsService;
@@ -25,18 +25,20 @@ public class ItemReplicasController {
     @RequestMapping(method = GET)
     public List<ItemReplica> getItemReplicas(
         @ModelAttribute("user_id") Integer userId,
-        @PathVariable("orderId") Integer orderId
+        @PathVariable("orderId") Integer orderId,
+        @PathVariable("market_vk_id") Integer marketVkId
     ) {
-        return orderPositionsService.getItemReplicas(userId, orderId);
+        return orderPositionsService.getItemReplicas(userId, marketVkId, orderId);
     }
 
     @RequestMapping(value = "/{itemId}", method = GET)
     public ItemReplica getItemReplica(
         @ModelAttribute("user_id") Integer userId,
         @PathVariable("orderId") Integer orderId,
-        @PathVariable("itemId") Integer itemId
+        @PathVariable("itemId") Integer itemId,
+        @PathVariable("market_vk_id") Integer marketVkId
     ) {
-        return orderPositionsService.getItemReplica(userId, orderId, itemId);
+        return orderPositionsService.getItemReplica(userId, marketVkId, orderId, itemId);
     }
 
     @RequestMapping(value = "/{itemId}", method = DELETE)
@@ -44,9 +46,10 @@ public class ItemReplicasController {
     public void deleteItemReplica(
         @ModelAttribute("user_id") Integer userId,
         @PathVariable("orderId") Integer orderId,
-        @PathVariable("itemId") Integer itemId
+        @PathVariable("itemId") Integer itemId,
+        @PathVariable("market_vk_id") Integer marketVkId
     ) {
-        orderPositionsService.deleteOrderPosition(userId, orderId, itemId);
+        orderPositionsService.deleteOrderPosition(userId, marketVkId, orderId, itemId);
     }
 
     @RequestMapping(method = POST)
@@ -54,19 +57,20 @@ public class ItemReplicasController {
         @ModelAttribute("user_id") Integer userId,
         @PathVariable("orderId") Integer orderId,
         @RequestBody(required = true) ItemReplica itemReplica,
+        @PathVariable("market_vk_id") Integer marketVkId,
 
         UriComponentsBuilder builder
     ) {
-        Integer itemId = orderPositionsService.addItemReplica(userId, orderId, itemReplica);
+        Integer itemId = orderPositionsService.addItemReplica(userId, marketVkId, orderId, itemReplica);
 
         UriComponents uriComponents = builder
             .path(PATH + "/{itemId}")
-            .buildAndExpand(orderId, itemId);
+            .buildAndExpand(marketVkId, orderId, itemId);
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(uriComponents.toUri());
 
-        ItemReplica addedItemReplica = orderPositionsService.getItemReplica(userId, orderId, itemId);
+        ItemReplica addedItemReplica = orderPositionsService.getItemReplica(userId, marketVkId, orderId, itemId);
 
         return new ResponseEntity<>(addedItemReplica, httpHeaders, HttpStatus.CREATED);
     }

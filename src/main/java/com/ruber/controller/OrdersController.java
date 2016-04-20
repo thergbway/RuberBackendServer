@@ -31,7 +31,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @RestController
 @RequestMapping(OrdersController.PATH)
 public class OrdersController {
-    public static final String PATH = "/orders";
+    public static final String PATH = "/markets/{market_vk_id}/orders";
 
     @Autowired
     private OrdersService ordersService;
@@ -60,35 +60,41 @@ public class OrdersController {
     public ResponseEntity<Order> addOrder(
         @RequestBody(required = true) Order order,
         @ModelAttribute("user_id") Integer userId,
+        @PathVariable("market_vk_id") Integer marketVkId,
 
         UriComponentsBuilder builder) {
 
-        Integer orderId = ordersService.addOrder(userId, order);
+        Integer orderId = ordersService.addOrder(userId, marketVkId, order);
 
         UriComponents uriComponents = builder
             .path(PATH + "/{id}")
-            .buildAndExpand(orderId);
+            .buildAndExpand(marketVkId, orderId);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(uriComponents.toUri());
 
-        Order addedOrder = ordersService.getOrder(userId, orderId);
+        Order addedOrder = ordersService.getOrder(userId, marketVkId, orderId);
 
         return new ResponseEntity<>(addedOrder, headers, HttpStatus.CREATED);
     }
 
 
     @RequestMapping(method = GET)
-    public List<OrderPreview> getOrdersPreview(@ModelAttribute("user_id") Integer userId) {
-        return ordersService.getOrdersPreview(userId);
+    public List<OrderPreview> getOrdersPreview(
+        @ModelAttribute("user_id") Integer userId,
+        @PathVariable("market_vk_id") Integer marketVkId
+    ) {
+        return ordersService.getOrdersPreview(userId, marketVkId);
     }
 
     @RequestMapping(value = "/{id}", method = GET)
     public Order getOrder(
         @PathVariable("id") Integer orderId,
-        @ModelAttribute("user_id") Integer userId) {
+        @ModelAttribute("user_id") Integer userId,
+        @PathVariable("market_vk_id") Integer marketVkId
+    ) {
 
-        return ordersService.getOrder(userId, orderId);
+        return ordersService.getOrder(userId, marketVkId, orderId);
     }
 
     @RequestMapping(value = "/{id}", method = PUT)
@@ -96,13 +102,14 @@ public class OrdersController {
     public Order updateOrder(
         @PathVariable("id") Integer orderId,
         @RequestBody(required = true) JsonNode updateInfo,
-        @ModelAttribute("user_id") Integer userId
+        @ModelAttribute("user_id") Integer userId,
+        @PathVariable("market_vk_id") Integer marketVkId
     ) {
         validateUpdateOrderJsonNode(updateInfo);
 
-        ordersService.updateOrder(userId, orderId, updateInfo);
+        ordersService.updateOrder(userId, marketVkId, orderId, updateInfo);
 
-        return ordersService.getOrder(userId, orderId);
+        return ordersService.getOrder(userId, marketVkId, orderId);
     }
 
     private void validateUpdateOrderJsonNode(JsonNode node) {

@@ -12,18 +12,21 @@ import java.util.Set;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
-//@RequestMapping //todo add right roots later
+@RequestMapping(UsersController.PATH)
 public class UsersController {
+    public static final String PATH = "/markets";
+
     @Autowired
     private UsersService usersService;
 
-    @RequestMapping(value = "/connected_groups", method = GET)
-    public Set<Integer> getConnectedVkGroupIds(@ModelAttribute("user_id") Integer userId) {
-
+    @RequestMapping(method = GET)
+    public Set<Integer> getConnectedVkGroupIds(
+        @ModelAttribute("user_id") Integer userId
+    ) {
         return usersService.getConnectedVkGroupIds(userId);
     }
 
-    @RequestMapping(value = "connected_groups", method = POST)
+    @RequestMapping(method = POST)
     @ResponseStatus(HttpStatus.CREATED)
     public Set<Integer> addConnectedVkGroupId(
         @RequestBody JsonNode requestBody,
@@ -38,10 +41,10 @@ public class UsersController {
         }
     }
 
-    @RequestMapping(value = "/connected_groups/{group_id}", method = DELETE)
+    @RequestMapping(value = "/{vk_group_id}", method = DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteConnectedVkGroupId(
-        @PathVariable("group_id") Integer vkGroupId,
+        @PathVariable("vk_group_id") Integer vkGroupId,
         @ModelAttribute("user_id") Integer userId
     ) {
         usersService.deleteConnectedVkGroupId(userId, vkGroupId);
