@@ -15,17 +15,13 @@ import java.util.HashSet;
 import static com.ruber.dao.entity.OrderStatus.PAID;
 import static com.ruber.dao.entity.OrderStatus.WAITING;
 import static com.ruber.util.TimeUtils.getCurrentTimestamp;
-import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 
 @Service
 public class FillDatabaseService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Transactional(
-        propagation = REQUIRES_NEW,
-        readOnly = false
-    )
+    @Transactional
     public void fill() {
         try {
             ExternalAppCredential cr1 = new ExternalAppCredential(null, 100, "100", "iPhone application");
