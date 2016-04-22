@@ -22,12 +22,8 @@ public class VkItemReplica extends ItemReplica {
     @Column(name = "vk_id", nullable = false)
     private Integer vkId;
 
-//    @Column(name = "vk_owner_id", nullable = false)
-//    private Integer vkOwnerId;
-
-    public VkItemReplica(Integer id, String title, String description, URL thumbPhoto, BigDecimal price, Integer amount, Integer vkId/*, Integer vkOwnerId*/) {
+    public VkItemReplica(Integer id, String title, String description, URL thumbPhoto, BigDecimal price, Integer amount, Integer vkId) {
         super(id, title, description, thumbPhoto, price, amount);
         this.vkId = vkId;
-//        this.vkOwnerId = vkOwnerId;
     }
 }
