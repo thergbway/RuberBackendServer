@@ -25,7 +25,7 @@ public class PinnedText {
 
     public com.ruber.dao.entity.PinnedText toEntity(Long createdTimestamp) {
         return new com.ruber.dao.entity.PinnedText(
-            null,//fixme can be set to some value from controller
+            null,
             position,
             createdTimestamp,
             text

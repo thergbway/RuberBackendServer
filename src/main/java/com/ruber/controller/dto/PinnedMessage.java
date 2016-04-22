@@ -25,7 +25,7 @@ public class PinnedMessage {
 
     public com.ruber.dao.entity.PinnedMessage toEntity(Long createdTimestamp) {
         return new com.ruber.dao.entity.PinnedMessage(
-            null,//fixme can be set to some value from controller
+            null,
             position,
             createdTimestamp,
             vk_message_id
