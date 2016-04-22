@@ -8,7 +8,6 @@ import com.ruber.dao.OrderDAO;
 import com.ruber.dao.UserDAO;
 import com.ruber.dao.entity.*;
 import com.ruber.exception.InvalidURLException;
-import com.ruber.exception.NoSuchMarketException;
 import com.ruber.exception.NoSuchOrderException;
 import com.ruber.exception.NotEnoughArgumentsException;
 import com.ruber.util.TimeUtils;
@@ -36,15 +35,17 @@ public class OrdersService {
     @Autowired
     private MarketService marketService;
 
+    @Autowired
+    private UsersService usersService;
+
     public Integer addOrder(Integer userId, Integer marketVkId, Order order) {
-        User user = userDAO.read(userId);
+        usersService.assureMarketBelongsToUser(userId, marketVkId);
 
         Long createdTimestamp = TimeUtils.getCurrentTimestamp();
 
-        com.ruber.dao.entity.Order orderEntity = order.toEntity(createdTimestamp, user);
+        User user = userDAO.read(userId);
 
-        if (!user.getConnectedMarkets().contains(marketService.getMarketByVkGroupId(marketVkId)))
-            throw new NoSuchMarketException(marketVkId, user.getVkId());
+        com.ruber.dao.entity.Order orderEntity = order.toEntity(createdTimestamp, user);
 
         orderDAO.create(orderEntity);
 
@@ -54,10 +55,7 @@ public class OrdersService {
     }
 
     public Order getOrder(Integer userId, Integer marketVkId, Integer orderId) {
-        User user = userDAO.read(userId);
-
-        if (!user.getConnectedMarkets().contains(marketService.getMarketByVkGroupId(marketVkId)))
-            throw new NoSuchMarketException(marketVkId, user.getVkId());
+        usersService.assureMarketBelongsToUser(userId, marketVkId);
 
         return marketService
             .getMarketByVkGroupId(marketVkId)
@@ -70,10 +68,7 @@ public class OrdersService {
     }
 
     public List<OrderPreview> getOrdersPreview(Integer userId, Integer marketVkId) {
-        User user = userDAO.read(userId);
-
-        if (!user.getConnectedMarkets().contains(marketService.getMarketByVkGroupId(marketVkId)))
-            throw new NoSuchMarketException(marketVkId, user.getVkId());
+        usersService.assureMarketBelongsToUser(userId, marketVkId);
 
         return marketService
             .getMarketByVkGroupId(marketVkId)
@@ -84,10 +79,7 @@ public class OrdersService {
     }
 
     public void updateOrder(Integer userId, Integer marketVkId, Integer orderId, JsonNode updateInfo) {//fixme refactor: create several methods
-        User user = userDAO.read(userId);
-
-        if (!user.getConnectedMarkets().contains(marketService.getMarketByVkGroupId(marketVkId)))
-            throw new NoSuchMarketException(marketVkId, user.getVkId());
+        usersService.assureMarketBelongsToUser(userId, marketVkId);
 
         com.ruber.dao.entity.Order order = marketService
             .getMarketByVkGroupId(marketVkId)

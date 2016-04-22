@@ -6,6 +6,7 @@ import com.ruber.dao.entity.Market;
 import com.ruber.dao.entity.RuberToken;
 import com.ruber.dao.entity.User;
 import com.ruber.dao.entity.VkToken;
+import com.ruber.exception.NoSuchMarketException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,5 +72,12 @@ public class UsersService {
         User user = userDAO.read(userId);
 
         user.getConnectedMarkets().remove(marketService.getMarketByVkGroupId(vkGroupId));
+    }
+
+    public void assureMarketBelongsToUser(Integer userId, Integer marketVkId) {
+        User user = userDAO.read(userId);
+
+        if (!user.getConnectedMarkets().contains(marketService.getMarketByVkGroupId(marketVkId)))
+            throw new NoSuchMarketException(marketVkId, user.getVkId());
     }
 }

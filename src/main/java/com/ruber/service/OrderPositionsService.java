@@ -5,8 +5,6 @@ import com.ruber.dao.OrderPositionDAO;
 import com.ruber.dao.UserDAO;
 import com.ruber.dao.entity.Order;
 import com.ruber.dao.entity.OrderPosition;
-import com.ruber.dao.entity.User;
-import com.ruber.exception.NoSuchMarketException;
 import com.ruber.exception.NoSuchOrderException;
 import com.ruber.exception.NoSuchOrderPositionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +26,11 @@ public class OrderPositionsService {
     @Autowired
     private MarketService marketService;
 
-    public List<ItemReplica> getItemReplicas(Integer userId, Integer marketVkId, Integer orderId) {
-        //fixme check whether this order belongs to authenticated user
-        User user = userDAO.read(userId);
+    @Autowired
+    private UsersService usersService;
 
-        if (!user.getConnectedMarkets().contains(marketService.getMarketByVkGroupId(marketVkId)))
-            throw new NoSuchMarketException(marketVkId, user.getVkId());
+    public List<ItemReplica> getItemReplicas(Integer userId, Integer marketVkId, Integer orderId) {
+        usersService.assureMarketBelongsToUser(userId, marketVkId);
 
         Order order = marketService
             .getMarketByVkGroupId(marketVkId)
@@ -52,11 +49,7 @@ public class OrderPositionsService {
     }
 
     public ItemReplica getItemReplica(Integer userId, Integer marketVkId, Integer orderId, Integer itemId) {
-        //fixme check whether this order belongs to authenticated user
-        User user = userDAO.read(userId);
-
-        if (!user.getConnectedMarkets().contains(marketService.getMarketByVkGroupId(marketVkId)))
-            throw new NoSuchMarketException(marketVkId, user.getVkId());
+        usersService.assureMarketBelongsToUser(userId, marketVkId);
 
         Order order = marketService
             .getMarketByVkGroupId(marketVkId)
@@ -77,10 +70,7 @@ public class OrderPositionsService {
     }
 
     public void deleteOrderPosition(Integer userId, Integer marketVkId, Integer orderId, Integer positionId) {
-        User user = userDAO.read(userId);
-
-        if (!user.getConnectedMarkets().contains(marketService.getMarketByVkGroupId(marketVkId)))
-            throw new NoSuchMarketException(marketVkId, user.getVkId());
+        usersService.assureMarketBelongsToUser(userId, marketVkId);
 
         Order order = marketService
             .getMarketByVkGroupId(marketVkId)
@@ -101,10 +91,7 @@ public class OrderPositionsService {
     }
 
     public Integer addItemReplica(Integer userId, Integer marketVkId, Integer orderId, ItemReplica itemReplica) {
-        User user = userDAO.read(userId);
-
-        if (!user.getConnectedMarkets().contains(marketService.getMarketByVkGroupId(marketVkId)))
-            throw new NoSuchMarketException(marketVkId, user.getVkId());
+        usersService.assureMarketBelongsToUser(userId, marketVkId);
 
         Order order = marketService
             .getMarketByVkGroupId(marketVkId)

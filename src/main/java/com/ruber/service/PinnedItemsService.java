@@ -6,7 +6,6 @@ import com.ruber.controller.dto.PinnedMessage;
 import com.ruber.controller.dto.PinnedText;
 import com.ruber.dao.PinnedItemDAO;
 import com.ruber.dao.UserDAO;
-import com.ruber.dao.entity.Order;
 import com.ruber.dao.entity.PinnedItem;
 import com.ruber.dao.entity.User;
 import com.ruber.exception.NoSuchMarketException;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.ruber.util.TimeUtils.getCurrentTimestamp;
@@ -33,6 +31,9 @@ public class PinnedItemsService {
 
     @Autowired
     private MarketService marketService;
+
+    @Autowired
+    private UsersService usersService;
 
     public List<PinnedMessage> getPinnedMessages(Integer userId, Integer marketVkId, Integer orderId) {
         return getPinnedItems(userId, marketVkId, orderId)
@@ -64,19 +65,13 @@ public class PinnedItemsService {
         if (!user.getConnectedMarkets().contains(marketService.getMarketByVkGroupId(marketVkId)))
             throw new NoSuchMarketException(marketVkId, user.getVkId());
 
-        List<Order> orders = marketService
+        return marketService
             .getMarketByVkGroupId(marketVkId)
             .getOrders()
             .stream()
             .filter(order -> order.getId().equals(orderId))
-            .collect(Collectors.toList());
-
-        if (orders.size() == 0)
-            throw new NoSuchOrderException(orderId);
-
-        Order order = orders.get(0);
-
-        return order
+            .findFirst()
+            .orElseThrow(() -> new NoSuchOrderException(orderId))
             .getPinnedItems();
     }
 
@@ -95,36 +90,6 @@ public class PinnedItemsService {
             .buildFromEntity((com.ruber.dao.entity.PinnedFile) getPinnedItem(userId, marketVkId, orderId, fileId));
     }
 
-    private PinnedItem getPinnedItem(Integer userId, Integer marketVkId, Integer orderId, Integer itemId) {
-        User user = userDAO.read(userId);
-
-        if (!user.getConnectedMarkets().contains(marketService.getMarketByVkGroupId(marketVkId)))
-            throw new NoSuchMarketException(marketVkId, user.getVkId());
-
-        List<Order> orders = marketService
-            .getMarketByVkGroupId(marketVkId)
-            .getOrders()
-            .stream()
-            .filter(order -> order.getId().equals(orderId))
-            .collect(Collectors.toList());
-
-        if (orders.size() == 0)
-            throw new NoSuchOrderException(orderId);
-
-        Order order = orders.get(0);
-
-        Optional<PinnedItem> itemOptional = order
-            .getPinnedItems()
-            .stream()
-            .filter(pinnedItem -> pinnedItem.getId().equals(itemId))
-            .findFirst();
-
-        if (itemOptional.isPresent())
-            return itemOptional.get();
-        else
-            throw new NoSuchPinnedItemException(itemId);
-    }
-
     public byte[] getPinnedFileContent(Integer userId, Integer marketVkId, Integer orderId, Integer fileId) {
         com.ruber.dao.entity.PinnedFile pinnedFile
             = (com.ruber.dao.entity.PinnedFile) getPinnedItem(userId, marketVkId, orderId, fileId);
@@ -137,6 +102,24 @@ public class PinnedItemsService {
             = (com.ruber.dao.entity.PinnedFile) getPinnedItem(userId, marketVkId, orderId, fileId);
 
         return pinnedFile.getFileName();
+    }
+
+    private PinnedItem getPinnedItem(Integer userId, Integer marketVkId, Integer orderId, Integer itemId) {
+        usersService.assureMarketBelongsToUser(userId, marketVkId);
+
+        return marketService
+            .getMarketByVkGroupId(marketVkId)
+            .getOrders()
+            .stream()
+            .filter(order -> order.getId().equals(orderId))
+            .findFirst()
+            .orElseThrow(() -> new NoSuchOrderException(orderId))
+
+            .getPinnedItems()
+            .stream()
+            .filter(pinnedItem -> pinnedItem.getId().equals(itemId))
+            .findFirst()
+            .orElseThrow(() -> new NoSuchPinnedItemException(itemId));
     }
 
     public Integer addPinnedMessage(Integer userId, Integer marketVkId, Integer orderId, PinnedMessage pinnedMessageInfo) {
@@ -155,24 +138,16 @@ public class PinnedItemsService {
     }
 
     private Integer addPinnedItem(Integer userId, Integer marketVkId, Integer orderId, PinnedItem pinnedItem) {
-        User user = userDAO.read(userId);
+        usersService.assureMarketBelongsToUser(userId, marketVkId);
 
-        if (!user.getConnectedMarkets().contains(marketService.getMarketByVkGroupId(marketVkId)))
-            throw new NoSuchMarketException(marketVkId, user.getVkId());
-
-        List<Order> orders = marketService
+        marketService
             .getMarketByVkGroupId(marketVkId)
             .getOrders()
             .stream()
             .filter(order -> order.getId().equals(orderId))
-            .collect(Collectors.toList());
+            .findFirst()
+            .orElseThrow(() -> new NoSuchOrderException(orderId))
 
-        if (orders.size() == 0)
-            throw new NoSuchOrderException(orderId);
-
-        Order order = orders.get(0);
-
-        order
             .getPinnedItems()
             .add(pinnedItem);
 
@@ -182,32 +157,22 @@ public class PinnedItemsService {
     }
 
     public void deletePinnedItem(Integer userId, Integer marketVkId, Integer orderId, Integer itemId) {
-        User user = userDAO.read(userId);
+        usersService.assureMarketBelongsToUser(userId, marketVkId);
 
-        if (!user.getConnectedMarkets().contains(marketService.getMarketByVkGroupId(marketVkId)))
-            throw new NoSuchMarketException(marketVkId, user.getVkId());
-
-        List<Order> orders = marketService
+        PinnedItem pinnedItemToDelete = marketService
             .getMarketByVkGroupId(marketVkId)
             .getOrders()
             .stream()
             .filter(order -> order.getId().equals(orderId))
-            .collect(Collectors.toList());
+            .findFirst()
+            .orElseThrow(() -> new NoSuchOrderException(orderId))
 
-        if (orders.size() == 0)
-            throw new NoSuchOrderException(orderId);
-
-        Order order = orders.get(0);
-
-        Optional<com.ruber.dao.entity.PinnedItem> itemOptional = order
             .getPinnedItems()
             .stream()
             .filter(pinnedItem -> pinnedItem.getId().equals(itemId))
-            .findFirst();
+            .findFirst()
+            .orElseThrow(() -> new NoSuchPinnedItemException(itemId));
 
-        if (!itemOptional.isPresent())
-            throw new NoSuchPinnedItemException(itemId);
-        else
-            pinnedItemDAO.deleteById(itemOptional.get().getId());
+        pinnedItemDAO.deleteById(pinnedItemToDelete.getId());
     }
 }
