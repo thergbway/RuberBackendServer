@@ -1,13 +1,32 @@
 package com.ruber.dao;
 
-//TODO попробовать вынести логику в этот абстрактный класс
-public interface GenericDAO<Entity> {
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-    void create(Entity e);
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
-    Entity read(Integer id);
+@Repository
+@Transactional
+public abstract class GenericDAO<Entity> {
+    @PersistenceContext
+    protected EntityManager entityManager;
 
-    void update(Entity e);
+    protected abstract Class<Entity> getEntityType();
 
-    void delete(Integer id);
+    public void create(Entity e) {
+        entityManager.persist(e);
+    }
+
+    public Entity read(Integer id) {
+        return entityManager.find(getEntityType(), id);
+    }
+
+    public void update(Entity e) {
+        entityManager.refresh(e);
+    }
+
+    public void delete(Integer id) {
+        entityManager.remove(read(id));
+    }
 }
