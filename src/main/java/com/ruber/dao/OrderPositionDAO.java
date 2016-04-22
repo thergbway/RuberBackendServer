@@ -13,7 +13,7 @@ public class OrderPositionDAO extends GenericDAO<OrderPosition> {
     }
 
     public void deleteById(Integer positionId) {
-        entityManager
+        entityManager//it can be avoid if I fix transactions
             .createNamedQuery("OrderPosition.deleteById")
             .setParameter("positionId", positionId)
             .executeUpdate();

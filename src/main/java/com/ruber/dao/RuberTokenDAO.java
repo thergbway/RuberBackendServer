@@ -15,7 +15,7 @@ public class RuberTokenDAO extends GenericDAO<RuberToken> {
     }
 
     public boolean isRuberTokenValueExists(String token) {
-        List<RuberToken> tokens = entityManager//TODO
+        List<RuberToken> tokens = entityManager
             .createNamedQuery("RuberToken.getByValue", RuberToken.class)
             .setParameter("value", token)
             .getResultList();

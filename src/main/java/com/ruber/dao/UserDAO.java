@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static org.springframework.dao.support.DataAccessUtils.singleResult;
+
 @Repository
 @Transactional
 public class UserDAO extends GenericDAO<User> {
@@ -15,20 +17,20 @@ public class UserDAO extends GenericDAO<User> {
     }
 
     public User getByVkId(Integer vkId) {
-        List<User> users = entityManager//TODO
+        List<User> users = entityManager
             .createNamedQuery("User.getByVkId", User.class)
             .setParameter("vkId", vkId)
             .getResultList();
 
-        return users.size() == 1 ? users.get(0) : null;
+        return singleResult(users);
     }
 
     public User getByRuberToken(String token) {
-        List<User> users = entityManager//TODO
+        List<User> users = entityManager
             .createNamedQuery("User.getByRuberToken", User.class)
             .setParameter("token", token)
             .getResultList();
 
-        return users.size() == 1 ? users.get(0) : null;
+        return singleResult(users);
     }
 }

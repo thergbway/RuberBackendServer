@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static org.springframework.dao.support.DataAccessUtils.singleResult;
+
 @Repository
 @Transactional
 public class ExternalAppCredentialsDAO extends GenericDAO<ExternalAppCredential> {
@@ -15,11 +17,11 @@ public class ExternalAppCredentialsDAO extends GenericDAO<ExternalAppCredential>
     }
 
     public ExternalAppCredential getByAppId(Integer appId) {
-        List<ExternalAppCredential> credentials = entityManager//TODO
+        List<ExternalAppCredential> credentials = entityManager
             .createNamedQuery("ExternalAppCredential.getByAppId", ExternalAppCredential.class)
             .setParameter("appId", appId)
             .getResultList();
 
-        return credentials.size() == 1 ? credentials.get(0) : null;
+        return singleResult(credentials);
     }
 }

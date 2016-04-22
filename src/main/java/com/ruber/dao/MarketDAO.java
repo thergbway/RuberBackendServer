@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static org.springframework.dao.support.DataAccessUtils.singleResult;
+
 @Repository
 @Transactional
 public class MarketDAO extends GenericDAO<Market> {
@@ -20,6 +22,6 @@ public class MarketDAO extends GenericDAO<Market> {
             .setParameter("vk_group_id", vkGroupId)
             .getResultList();
 
-        return markets.size() == 1 ? markets.get(0) : null;
+        return singleResult(markets);
     }
 }

@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static org.springframework.dao.support.DataAccessUtils.singleResult;
+
 @Repository
 @Transactional
 public class VkTokenDAO extends GenericDAO<VkToken> {
@@ -20,6 +22,6 @@ public class VkTokenDAO extends GenericDAO<VkToken> {
             .setParameter("value", tokenValue)
             .getResultList();
 
-        return vkTokens.size() == 1 ? vkTokens.get(0) : null;
+        return singleResult(vkTokens);
     }
 }

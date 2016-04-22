@@ -13,7 +13,7 @@ public class PinnedItemDAO extends GenericDAO<PinnedItem> {
     }
 
     public void deleteById(Integer pinnedItemId) {
-        entityManager
+        entityManager//it can be avoid if I fix transactions
             .createNamedQuery("PinnedItem.deleteById")
             .setParameter("pinnedItemId", pinnedItemId)
             .executeUpdate();
