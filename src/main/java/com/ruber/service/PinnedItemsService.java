@@ -5,10 +5,7 @@ import com.ruber.controller.dto.PinnedFile;
 import com.ruber.controller.dto.PinnedMessage;
 import com.ruber.controller.dto.PinnedText;
 import com.ruber.dao.PinnedItemDAO;
-import com.ruber.dao.UserDAO;
 import com.ruber.dao.entity.PinnedItem;
-import com.ruber.dao.entity.User;
-import com.ruber.exception.NoSuchMarketException;
 import com.ruber.exception.NoSuchOrderException;
 import com.ruber.exception.NoSuchPinnedItemException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +20,6 @@ import static com.ruber.util.TimeUtils.getCurrentTimestamp;
 @Service
 @Transactional
 public class PinnedItemsService {
-    @Autowired
-    private UserDAO userDAO;
-
     @Autowired
     private PinnedItemDAO pinnedItemDAO;
 
@@ -60,10 +54,7 @@ public class PinnedItemsService {
     }
 
     private List<PinnedItem> getPinnedItems(Integer userId, Integer marketVkId, Integer orderId) {
-        User user = userDAO.read(userId);
-
-        if (!user.getConnectedMarkets().contains(marketService.getMarketByVkGroupId(marketVkId)))
-            throw new NoSuchMarketException(marketVkId, user.getVkId());
+        usersService.assureMarketBelongsToUser(userId, marketVkId);
 
         return marketService
             .getMarketByVkGroupId(marketVkId)
