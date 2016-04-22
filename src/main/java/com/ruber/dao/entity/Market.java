@@ -24,7 +24,7 @@ public class Market {
     @GeneratedValue(strategy = SEQUENCE)
     private Integer id;
 
-    @Column(name = "vk_id", nullable = false)
+    @Column(name = "vk_id", nullable = false, unique = true)
     private Integer vkId;
 
     @OneToMany(cascade = ALL)
