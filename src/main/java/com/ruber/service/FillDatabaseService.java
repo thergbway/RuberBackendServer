@@ -74,8 +74,6 @@ public class FillDatabaseService {
 
             entityManager.persist(market);
             entityManager.persist(user);
-
-            System.out.println(user.getId());
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
