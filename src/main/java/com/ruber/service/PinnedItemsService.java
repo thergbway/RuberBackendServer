@@ -6,7 +6,6 @@ import com.ruber.controller.dto.PinnedMessage;
 import com.ruber.controller.dto.PinnedText;
 import com.ruber.dao.PinnedItemDAO;
 import com.ruber.dao.entity.PinnedItem;
-import com.ruber.exception.NoSuchOrderException;
 import com.ruber.exception.NoSuchPinnedItemException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,12 +56,7 @@ public class PinnedItemsService {
         usersService.assureMarketBelongsToUser(userId, marketVkId);
 
         return marketService
-            .getMarketByVkGroupId(marketVkId)
-            .getOrders()
-            .stream()
-            .filter(order -> order.getId().equals(orderId))
-            .findFirst()
-            .orElseThrow(() -> new NoSuchOrderException(orderId))
+            .assureAndGetOrderFromMarket(marketVkId, orderId)
             .getPinnedItems();
     }
 
@@ -99,12 +93,7 @@ public class PinnedItemsService {
         usersService.assureMarketBelongsToUser(userId, marketVkId);
 
         return marketService
-            .getMarketByVkGroupId(marketVkId)
-            .getOrders()
-            .stream()
-            .filter(order -> order.getId().equals(orderId))
-            .findFirst()
-            .orElseThrow(() -> new NoSuchOrderException(orderId))
+            .assureAndGetOrderFromMarket(marketVkId, orderId)
 
             .getPinnedItems()
             .stream()
@@ -132,12 +121,7 @@ public class PinnedItemsService {
         usersService.assureMarketBelongsToUser(userId, marketVkId);
 
         marketService
-            .getMarketByVkGroupId(marketVkId)
-            .getOrders()
-            .stream()
-            .filter(order -> order.getId().equals(orderId))
-            .findFirst()
-            .orElseThrow(() -> new NoSuchOrderException(orderId))
+            .assureAndGetOrderFromMarket(marketVkId, orderId)
 
             .getPinnedItems()
             .add(pinnedItem);
@@ -151,12 +135,7 @@ public class PinnedItemsService {
         usersService.assureMarketBelongsToUser(userId, marketVkId);
 
         PinnedItem pinnedItemToDelete = marketService
-            .getMarketByVkGroupId(marketVkId)
-            .getOrders()
-            .stream()
-            .filter(order -> order.getId().equals(orderId))
-            .findFirst()
-            .orElseThrow(() -> new NoSuchOrderException(orderId))
+            .assureAndGetOrderFromMarket(marketVkId, orderId)
 
             .getPinnedItems()
             .stream()

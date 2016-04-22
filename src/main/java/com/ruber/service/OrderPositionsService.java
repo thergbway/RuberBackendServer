@@ -2,10 +2,7 @@ package com.ruber.service;
 
 import com.ruber.controller.dto.ItemReplica;
 import com.ruber.dao.OrderPositionDAO;
-import com.ruber.dao.UserDAO;
-import com.ruber.dao.entity.Order;
 import com.ruber.dao.entity.OrderPosition;
-import com.ruber.exception.NoSuchOrderException;
 import com.ruber.exception.NoSuchOrderPositionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,9 +15,6 @@ import java.util.stream.Collectors;
 @Transactional// fixme
 public class OrderPositionsService {
     @Autowired
-    private UserDAO userDAO;
-
-    @Autowired
     private OrderPositionDAO orderPositionDAO;
 
     @Autowired
@@ -32,15 +26,8 @@ public class OrderPositionsService {
     public List<ItemReplica> getItemReplicas(Integer userId, Integer marketVkId, Integer orderId) {
         usersService.assureMarketBelongsToUser(userId, marketVkId);
 
-        Order order = marketService
-            .getMarketByVkGroupId(marketVkId)
-            .getOrders()
-            .stream()
-            .filter(currOrder -> currOrder.getId().equals(orderId))
-            .findFirst()
-            .orElseThrow(() -> new NoSuchOrderException(orderId));
-
-        return order
+        return marketService
+            .assureAndGetOrderFromMarket(marketVkId, orderId)
             .getOrderPositions()
             .stream()
             .filter(pos -> pos instanceof com.ruber.dao.entity.ItemReplica)
@@ -51,15 +38,8 @@ public class OrderPositionsService {
     public ItemReplica getItemReplica(Integer userId, Integer marketVkId, Integer orderId, Integer itemId) {
         usersService.assureMarketBelongsToUser(userId, marketVkId);
 
-        Order order = marketService
-            .getMarketByVkGroupId(marketVkId)
-            .getOrders()
-            .stream()
-            .filter(currOrder -> currOrder.getId().equals(orderId))
-            .findFirst()
-            .orElseThrow(() -> new NoSuchOrderException(orderId));
-
-        return order
+        return marketService
+            .assureAndGetOrderFromMarket(marketVkId, orderId)
             .getOrderPositions()
             .stream()
             .filter(position -> position.getId().equals(itemId) && position instanceof com.ruber.dao.entity.ItemReplica)
@@ -72,15 +52,8 @@ public class OrderPositionsService {
     public void deleteOrderPosition(Integer userId, Integer marketVkId, Integer orderId, Integer positionId) {
         usersService.assureMarketBelongsToUser(userId, marketVkId);
 
-        Order order = marketService
-            .getMarketByVkGroupId(marketVkId)
-            .getOrders()
-            .stream()
-            .filter(currOrder -> currOrder.getId().equals(orderId))
-            .findFirst()
-            .orElseThrow(() -> new NoSuchOrderException(orderId));
-
-        OrderPosition orderPosition = order
+        OrderPosition orderPosition = marketService
+            .assureAndGetOrderFromMarket(marketVkId, orderId)
             .getOrderPositions()
             .stream()
             .filter(position -> position.getId().equals(positionId))
@@ -93,17 +66,10 @@ public class OrderPositionsService {
     public Integer addItemReplica(Integer userId, Integer marketVkId, Integer orderId, ItemReplica itemReplica) {
         usersService.assureMarketBelongsToUser(userId, marketVkId);
 
-        Order order = marketService
-            .getMarketByVkGroupId(marketVkId)
-            .getOrders()
-            .stream()
-            .filter(currOrder -> currOrder.getId().equals(orderId))
-            .findFirst()
-            .orElseThrow(() -> new NoSuchOrderException(orderId));
-
         com.ruber.dao.entity.ItemReplica itemReplicaEntity = itemReplica.toEntity();
 
-        order
+        marketService
+            .assureAndGetOrderFromMarket(marketVkId, orderId)
             .getOrderPositions()
             .add(itemReplicaEntity);
 

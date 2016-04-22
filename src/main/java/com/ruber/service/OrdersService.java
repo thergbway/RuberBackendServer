@@ -8,7 +8,6 @@ import com.ruber.dao.OrderDAO;
 import com.ruber.dao.UserDAO;
 import com.ruber.dao.entity.*;
 import com.ruber.exception.InvalidURLException;
-import com.ruber.exception.NoSuchOrderException;
 import com.ruber.exception.NotEnoughArgumentsException;
 import com.ruber.util.TimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +48,10 @@ public class OrdersService {
 
         orderDAO.create(orderEntity);
 
-        marketService.getMarketByVkGroupId(marketVkId).getOrders().add(orderEntity);
+        marketService
+            .getMarketByVkGroupId(marketVkId)
+            .getOrders()
+            .add(orderEntity);
 
         return orderEntity.getId();
     }
@@ -57,14 +59,9 @@ public class OrdersService {
     public Order getOrder(Integer userId, Integer marketVkId, Integer orderId) {
         usersService.assureMarketBelongsToUser(userId, marketVkId);
 
-        return marketService
-            .getMarketByVkGroupId(marketVkId)
-            .getOrders()
-            .stream()
-            .filter(currOrder -> currOrder.getId().equals(orderId))
-            .map(Order::buildFromOrder)
-            .findFirst()
-            .orElseThrow(() -> new NoSuchOrderException(orderId));
+        com.ruber.dao.entity.Order order = marketService.assureAndGetOrderFromMarket(marketVkId, orderId);
+
+        return Order.buildFromOrder(order);
     }
 
     public List<OrderPreview> getOrdersPreview(Integer userId, Integer marketVkId) {
@@ -81,13 +78,7 @@ public class OrdersService {
     public void updateOrder(Integer userId, Integer marketVkId, Integer orderId, JsonNode updateInfo) {//fixme refactor: create several methods
         usersService.assureMarketBelongsToUser(userId, marketVkId);
 
-        com.ruber.dao.entity.Order order = marketService
-            .getMarketByVkGroupId(marketVkId)
-            .getOrders()
-            .stream()
-            .filter(currOrder -> currOrder.getId().equals(orderId))
-            .findFirst()
-            .orElseThrow(() -> new NoSuchOrderException(orderId));
+        com.ruber.dao.entity.Order order = marketService.assureAndGetOrderFromMarket(marketVkId, orderId);
 
         Function<JsonNode, Long> getAsLongOrNull = (JsonNode longNode) ->
             longNode.isNull() ? null : longNode.asLong();
